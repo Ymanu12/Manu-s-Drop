@@ -7,22 +7,78 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Coupon;
+use App\Models\Orders;
+use App\Models\Slider;
+use App\Models\Contact;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver; // Ou Imagick\Driver
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Intervention\Image\Facades\Image;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 
 class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.index');
+        $orders = Orders::orderBy('created_at', 'DESC')->get()->take(10);
+        
+        $dashboardDatas = DB::select("
+            SELECT 
+                sum(total) AS TotalAmount,
+                sum(if(status='ordered', total, 0)) AS TotalOrderedAmount,
+                sum(if(status='delivered', total, 0)) AS TotalDeliveredAmount,
+                sum(if(status='canceled', total, 0)) AS TotalCanceledAmount,
+                count(*) AS Total,
+                sum(if(status='ordered', 1, 0)) AS TotalOrdered,
+                sum(if(status='delivered', 1, 0)) AS TotalDelivered,
+                sum(if(status='canceled', 1, 0)) AS TotalCanceled
+            FROM orders
+        ");
+
+        $monthlyDatas = DB::select("SELECT M.id As MonthNo, M.name As MonthName,
+                IFNULL(D.TotalAmount,0) As TotalAmount,
+                IFNULL(D.TotalOrderedAmount,0) As TotalOrderedAmount,
+                IFNULL(D.TotalDeliveredAmount,0) As TotalDeliveredAmount,
+                IFNULL(D.TotalCanceledAmount,0) As TotalCanceledAmount 
+            FROM month_names M
+            LEFT JOIN (
+                SELECT DATE_FORMAT(created_at, '%b') As MonthName,
+                    MONTH(created_at) As MonthNo,
+                    sum(total) As TotalAmount,
+                    sum(if(status='ordered',total,0)) As TotalOrderedAmount,
+                    sum(if(status='delivered',total,0)) As TotalDeliveredAmount,
+                    sum(if(status='canceled',total,0)) As TotalCanceledAmount
+                FROM Orders 
+                WHERE YEAR(created_at)=YEAR(NOW()) 
+                GROUP BY YEAR(created_at), MONTH(created_at), DATE_FORMAT(created_at, '%b')
+                ORDER BY MONTH(created_at)
+            ) D ON D.MonthNo=M.id"
+        );
+
+        $AmountM = implode(',', collect($monthlyDatas)->pluck('TotalAmount')->toArray());
+        $OrderedAmountM = implode(',', collect($monthlyDatas)->pluck('TotalOrderedAmount')->toArray());
+        $DeliveredAmountM = implode(',', collect($monthlyDatas)->pluck('TotalDeliveredAmount')->toArray());
+        $CanceledAmountM = implode(',', collect($monthlyDatas)->pluck('TotalCanceledAmount')->toArray());
+
+        $TotalAmount = collect($monthlyDatas)->sum('TotalAmount');
+        $TotalOrderedAmount = collect($monthlyDatas)->sum('TotalOrderedAmount');
+        $TotalDeliveredAmount = collect($monthlyDatas)->sum('TotalDeliveredAmount');
+        $TotalCanceledAmount = collect($monthlyDatas)->sum('TotalCanceledAmount');
+
+        // comme DB::select() retourne un tableau, on prend le premier élément
+        $dashboard = $dashboardDatas[0] ?? null;
+
+        return view('admin.index', compact('orders','dashboard', 'dashboardDatas', 'AmountM', 'OrderedAmountM', 'DeliveredAmountM', 'CanceledAmountM', 'TotalAmount', 'TotalOrderedAmount', 'TotalDeliveredAmount', 'TotalCanceledAmount'));
+        
     }
+
 
     // ============================
     // ======= BRANDS ============
@@ -532,5 +588,185 @@ class AdminController extends Controller
         $coupon->delete();
 
         return redirect()->route('admin.coupons')->with('success', 'Coupon deleted successfully!');
+    }
+
+    public function update_order_status(Request $request)
+    {
+        // Trouver la commande
+        $order = Orders::find($request->order_id);
+
+        if (!$order) {
+            return back()->with('error', 'Order not found!');
+        }
+
+        // Mettre à jour le statut
+        $order->status = $request->order_status;
+
+        // Mettre à jour les dates selon le statut
+        if ($request->order_status == 'delivered') {
+            $order->delivered_date = Carbon::now();
+        } elseif ($request->order_status == 'canceled') {
+            $order->canceled_date = Carbon::now();
+        }
+
+        // Sauvegarder la commande
+        $order->save();
+
+        // Si livré, mettre à jour la transaction liée
+        if ($request->order_status == 'delivered') {
+            $transaction = Transaction::where('orders_id', $request->order_id)->first();
+
+            if ($transaction) {
+                $transaction->status = 'approved';
+                $transaction->save();
+            }
+        }
+
+        // Retourner avec un message de succès
+        return back()->with('status', 'Status changed successfully!');
+    }
+
+    public function sliders()
+    {
+        $sliders = Slider::orderBy('id','DESC')->paginate(10);
+        return view('admin.sliders', compact('sliders'));
+    }
+
+    public function add_slider()
+    {
+        return view('admin.slider-add');
+    }
+
+    public function store_slider(Request $request) 
+    {
+        $request->validate([
+            'tagline' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:255',
+            'link' => 'required|url|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:3048',
+            'status' => 'required|boolean',
+        ]);
+
+        // Créer un nom unique pour l'image
+        $imageName = Str::random(10) . '_' . Carbon::now()->timestamp . '.' . $request->image->extension();
+        $path = public_path('uploads/sliders/' . $imageName);
+
+        // Créer le dossier s'il n'existe pas
+        if (!file_exists(public_path('uploads/sliders'))) {
+            mkdir(public_path('uploads/sliders'), 0755, true);
+        }
+
+        // Utiliser le nouveau ImageManager
+        $manager = new ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+
+        // Charger, redimensionner et enregistrer l'image avec qualité 80
+        $manager->read($request->file('image'))
+                ->resize(400, 690, function ($constraint) {
+                    $constraint->aspectRatio(); // conserver les proportions
+                })
+                ->cover(400, 690,"top")
+                ->save($path, quality: 100);
+
+        $imagePath = 'uploads/sliders/' . $imageName;
+
+        // Créer un nouveau slider
+        Slider::create([
+            'tagline' => $request->tagline,
+            'title' => $request->title,
+            'subtitle' => $request->subtitle,
+            'link' => $request->link,
+            'image' => $imagePath,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('admin.sliders')->with('status', 'Slider ajouté avec succès.');
+    }
+
+    public function edit_slider($id)
+    {
+        $slider = Slider::findOrFail($id);
+        return view('admin.slider-edit', compact('slider'));
+    }
+
+    public function update_slider(Request $request, $id)
+    {
+        $request->validate([
+            'tagline' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:255',
+            'link' => 'required|url|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:3048',
+            'status' => 'required|boolean',
+        ]);
+
+        $slider = Slider::findOrFail($id);
+
+        $slider->tagline = $request->tagline;
+        $slider->title = $request->title;
+        $slider->subtitle = $request->subtitle;
+        $slider->link = $request->link;
+        $slider->status = $request->status;
+
+        if ($request->hasFile('image')) {
+            // Supprimer l'ancienne image si elle existe
+            if (file_exists(public_path($slider->image))) {
+                unlink(public_path($slider->image));
+            }
+
+            $imageName = Str::random(10) . '_' . Carbon::now()->timestamp . '.' . $request->image->extension();
+            $path = public_path('uploads/sliders/' . $imageName);
+
+            $manager = new ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $manager->read($request->file('image'))
+                    ->resize(400, 690, function ($constraint) {
+                        $constraint->aspectRatio(); // conserver les proportions
+                    })
+                    ->cover(400, 690)
+                    ->save($path, quality: 100);
+
+            $slider->image = 'uploads/sliders/' . $imageName;
+        }
+
+        $slider->save();
+
+        return redirect()->route('admin.sliders')->with('status', 'Slider mis à jour avec succès.');
+    }
+
+    public function destroy_slider($id)
+    {
+        $slider = Slider::findOrFail($id);
+
+        // Supprimer l'ancienne image du dossier si elle existe
+        if (file_exists(public_path($slider->image))) {
+            unlink(public_path($slider->image));
+        }
+
+        // Supprimer le slider de la base de données
+        $slider->delete();
+
+        return redirect()->route('admin.sliders')->with('status', 'Slider supprimé avec succès.');
+    }
+
+    public function contacts()
+    {
+        $contacts = Contact::orderBy('created_at','DESC')->paginate(10);
+        return view('admin.contacts', compact('contacts'));
+    }
+
+    public function contact_delete($id)
+    {
+        $contact = Contact::find($id);
+        $contact->delete();
+
+        return redirect()->route('admin.contacts')->with('success', 'contact deleted successfully!');
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $results = Product::where('name', 'LIKE', "%{$query}%")->take(8)->get();
+
+        return response()->json($results);
     }
 }

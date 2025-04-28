@@ -27,9 +27,19 @@ Route::middleware('auth')->group(function () {
 
     // 🏠 Accueil
     Route::get('/', [HomeController::class, 'index'])->name('home.index');
+    Route::get('/contacts', [HomeController::class, 'contacts'])->name('home.contacts');
+    Route::post('/contact/store', [HomeController::class, 'contact_store'])->name('home.contact.store');
+    Route::get('/abouts', [HomeController::class, 'abouts'])->name('home.about');
+
+    Route::get('/search', [HomeController::class, 'searchs'])->name('home.search');
 
     // 👤 Utilisateur
     Route::get('/user/index', [UserController::class, 'index'])->name('user.index');
+    Route::get('/user/orders', [UserController::class, 'orders'])->name('user.orders');
+    Route::get('/user/{order_id}/order_details', [UserController::class, 'order_details'])->name('user.order.details');
+    Route::put('/user/order-cancel', [UserController::class, 'order_cancel'])->name('user.order.cancel');
+    Route::get('/user/addresses', [UserController::class, 'address'])->name('user.addresses');
+
 
     // 👤 shop
     Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
@@ -43,8 +53,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/delete/{rowId}', [CartController::class, 'remove_item'])->name('cart.item.remove');
     Route::delete('/cart/destroy', [CartController::class, 'empty_cart'])->name('cart.empty');
 
-    Route::post('/cart/apply-coupon', [CartController::class, 'apply_coupon_code'])->name('cart.coupon.apply');
+    Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::post('/place-an-order', [CartController::class, 'place_an_order'])->name('cart.place.an.order'); 
+    Route::get('/order-confirmation', [CartController::class, 'order_confirmation'])->name('cart.order.confirmation'); 
 
+    Route::post('/cart/apply-coupon', [CartController::class, 'apply_coupon_code'])->name('cart.coupon.apply');
+    Route::delete('/cart/remove-coupon', [CartController::class, 'remove_coupon_code'])->name('cart.coupon.remove');
     // 👤 whishlist
     Route::post('/wishlist/add',[WishlistController::class, 'add_to_wishlist'])->name('wishlist.add');
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
@@ -54,6 +68,8 @@ Route::middleware('auth')->group(function () {
 
     // 🛠️ Admin Dashboard
     Route::get('/admin/index', [AdminController::class, 'index'])->name('admin.index');
+
+    Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
 
     // 🏷️ Marques (Brands)
     Route::prefix('admin/brands')->group(function () {
@@ -93,6 +109,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/edit', [AdminController::class, 'coupon_edit'])->name('admin.coupon.edit');
         Route::put('/{id}', [AdminController::class, 'coupon_update'])->name('admin.coupon.update');
         Route::delete('/{id}/delete', [AdminController::class, 'coupon_destroy'])->name('admin.coupon.destroy');
+    });
+
+    Route::prefix('admin/orders')->group(function () {
+        Route::get('/', [CartController::class, 'orders'])->name('admin.orders');
+        Route::get('/{order_id}/details', [CartController::class, 'order_details'])->name('admin.order.details');
+        Route::put('/update-order-status', [AdminController::class, 'update_order_status'])->name('update.order.status');
+    });
+
+    // 🛍 coupons
+    Route::prefix('admin/slides')->group(function () {
+        Route::get('/', [AdminController::class, 'sliders'])->name('admin.sliders');
+        Route::get('/add', [AdminController::class, 'add_slider'])->name('admin.slider.add');
+        Route::post('/store', [AdminController::class, 'store_slider'])->name('admin.slider.store');
+        Route::get('/{id}/edit', [AdminController::class, 'edit_slider'])->name('admin.slider.edit');
+        Route::put('/{id}', [AdminController::class, 'update_slider'])->name('admin.slider.update');
+        Route::delete('/{id}/delete', [AdminController::class, 'destroy_slider'])->name('admin.slider.destroy');
+    });
+
+    // 🛍 Produits
+    Route::prefix('admin/contacts')->group(function () {
+        Route::get('/', [AdminController::class, 'contacts'])->name('admin.contacts');
+        Route::delete('/{id}', [AdminController::class, 'contact_delete'])->name('admin.contact.delete');
     });
 
     // ⚙️ Paramètres utilisateur (optionnel)

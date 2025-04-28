@@ -84,29 +84,6 @@ return new class extends Migration
             $table->decimal('regular_price', 10, 2)->change();
             $table->decimal('sale_price', 10, 2)->change();
         });
-
-        Schema::create('bills', function (Blueprint $table) {
-            $table->string('id', 191)->primary();
-            $table->integer('qty');
-            $table->string('sale_code');
-            $table->integer('sale_price');
-            $table->integer('total');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade'); // Correction de pro_id
-            $table->timestamps();
-        });
-
-        Schema::create('paymethods', function (Blueprint $table) {
-            $table->string('id', 191)->primary();
-            $table->string('pay_name');
-            $table->timestamps();
-        });
-
-        Schema::create('payments', function (Blueprint $table) {
-            $table->string('id', 191)->primary();
-            $table->foreignId('paymethod_id')->constrained('paymethods')->onDelete('cascade');
-            $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
-            $table->timestamps();
-        });
     }
 
     /**
@@ -117,13 +94,9 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
-        Schema::dropIfExists('roles');
         Schema::dropIfExists('brands');
         Schema::dropIfExists('categories');
         Schema::dropIfExists('products');
         Schema::dropIfExists('sales');
-        Schema::dropIfExists('bills');
-        Schema::dropIfExists('paymethods');
-        Schema::dropIfExists('payments');
     }
 };

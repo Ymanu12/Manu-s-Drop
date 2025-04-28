@@ -7,7 +7,12 @@ use Surfsidemedia\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use App\Models\Coupon;
+use App\Models\Address;
+use App\Models\Orders;
+use App\Models\OrderItem;
+use App\Models\Transaction;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -122,4 +127,175 @@ class CartController extends Controller
         ]);
     }
 
+    public function remove_coupon_code()
+    {
+        Session::forget('coupon');
+        Session::forget('discounts');
+        return back()->with('success','coupon has been removed!');
+    }
+
+    public function checkout()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $user = Auth::user();
+        $address = Address::where('user_id', $user->id)
+                        ->where('is_default', true)
+                        ->first();
+
+        return view('checkout', compact('address'));
+    }
+
+    public function place_an_order(Request $request)
+    {
+        $user_id = Auth::user()->id;
+        $address = Address::where('user_id', $user_id)->where('is_default', 'true')->first();
+
+        if(!$address) {
+            $request->validate([
+                'name' => 'required|max:100',
+                'phone' => 'required|numeric',
+                'zip' => 'required|numeric',
+                'state' => 'required',
+                'city' => 'required',
+                'address' => 'required',
+                'locality' => 'required',
+                'landmark' => 'required',
+            ]);
+
+            $address = new Address();
+            $address->name = $request->name;
+            $address->phone = $request->phone;
+            $address->zip = $request->zip;
+            $address->state = $request->state;
+            $address->city = $request->city;
+            $address->address = $request->address;
+            $address->locality = $request->locality;
+            $address->landmark = $request->landmark;
+            $address->country = 'Togo';
+            $address->user_id = $user_id;
+            $address->is_default = true;
+            $address->save();
+        }
+
+        $this->setAmountforCheckout();
+
+        $order = new Orders();
+        $order->user_id = $user_id;
+        $checkout = Session::get('checkout', []);  // Valeur par défaut = tableau vide
+
+        // dd(Session::get('checkout'));
+
+        $order->subtotal = isset($checkout['subtotal']) ? str_replace(',', '', $checkout['subtotal']) : 0;
+        $order->discount = isset($checkout['discount']) ? str_replace(',', '', $checkout['discount']) : 0;
+        $order->tax = isset($checkout['tax']) ? str_replace(',', '', $checkout['tax']) : 0;
+        $order->total = isset($checkout['total']) ? str_replace(',', '', $checkout['total']) : 0;
+        $order->name = $address->name;
+        $order->phone = $address->phone;
+        $order->locality = $address->locality;
+        $order->address = $address->address;
+        $order->city = $address->city;
+        $order->state = $address->state;
+        $order->country = $address->country;
+        $order->landmark = $address->landmark;
+        $order->zip = $address->zip;
+        $order->save();
+
+        foreach(Cart::instance('cart')->content() as $item)
+        {
+            $orderItem = new OrderItem();
+            $orderItem->product_id = $item->id;
+            $orderItem->orders_id = $order->id;
+            $orderItem->price = $item->price;
+            $orderItem->quantity = $item->qty;
+            $orderItem->save(); // Ajout de cette ligne manquante
+        }
+
+        if($request->mode == "card")
+        {
+            //
+        }
+        elseif($request->mode == "paypal")
+        {
+            //
+        }
+        elseif($request->mode == "cod")
+        {
+            $transaction = new Transaction();
+            $transaction->user_id = $user_id;
+            $transaction->orders_id = $order->id;
+            $transaction->mode = $request->mode;
+            $transaction->status = "pending";
+            $transaction->save();
+        }
+
+        Cart::instance('cart')->destroy();
+        Session::forget('checkout');
+        Session::forget('coupon');
+        Session::forget('discounts');
+        Session::put('orders_id', $order->id);
+
+        return redirect()->route('cart.order.confirmation');
+    }
+
+    public function setAmountforcheckout()
+    {
+        if(!Cart::instance('cart')->count() > 0)
+        {
+            Session::forget('checkout');
+            return;
+        }
+
+        if(Session::has('coupon'))
+        {
+            Session::put('checkout',[
+                'discount' => Session::get('discounts')['discount'],
+                'subtotal' => Session::get('discounts')['subtotal'],
+                'tax' => Session::get('discounts')['tax'],
+                'total' => Session::get('discounts')['total'],
+            ]);
+        }
+        else
+        {
+            Session::put('checkout',[
+                'discount' => 0,
+                'subtotal' => Cart::instance('cart')->subtotal(),
+                'tax' => Cart::instance('cart')->tax(),
+                'total' => Cart::instance('cart')->total(),
+            ]);
+        }
+    }
+
+    public function order_confirmation()
+    {
+        if (Session::has('orders_id')) {
+            $orderId = Session::get('orders_id');
+            $order = Orders::find($orderId);
+
+            if ($order) {
+                return view('order-confirmation', compact('order'));
+            }
+
+            // Si l'ID est dans la session mais ne correspond à aucune commande
+            Session::forget('orders_id');
+        }
+
+        return redirect()->route('cart.index')->with('error', 'Commande introuvable ou expirée.');
+    }
+
+    public function orders()
+    {
+        $orders = Orders::orderBy('created_at', 'desc')->paginate(10);
+        return view('admin.orders', compact('orders'));
+    }
+
+    public function order_details($order_id)
+    {
+        $order = Orders::find($order_id);
+        $orderItems = OrderItem::where('orders_id', $order_id)->orderBy('id')->paginate(12);
+        $transaction = Transaction::where('orders_id', $order_id)->first();
+        return view('admin.order-details', compact('order','orderItems','transaction'));
+    }
 }

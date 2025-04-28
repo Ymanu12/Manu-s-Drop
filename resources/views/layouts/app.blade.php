@@ -21,10 +21,11 @@
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/swiper.min.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
         integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="{{ asset('build/assets/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/style.css') }}">
     @stack("styles")
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -263,6 +264,36 @@
         .logo__image {
         max-width: 220px;
         }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            transition: all 0.3s ease;
+            padding-right: 5px;
+        }
+
+        .product-item .image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            gap: 10px;
+            flex-shrink: 0;
+            padding: 5px;
+            border-radius: 10px;
+            background: #EFF4F8;
+        }
+
+        #box-content-search li {
+            list-style: none;
+        }
+
+        #box-content-search .product-item {
+            margin-bottom: 10px;
+        }
     </style>
     <div class="header-mobile header_sticky">
         <div class="container d-flex align-items-center h-100">
@@ -322,10 +353,10 @@
                 <a href="{{route('cart.index')}}" class="navigation__link">Cart</a>
                 </li>
                 <li class="navigation__item">
-                <a href="about.html" class="navigation__link">About</a>
+                <a href="{{route('home.about')}}" class="navigation__link">About</a>
                 </li>
                 <li class="navigation__item">
-                <a href="contact.html" class="navigation__link">Contact</a>
+                <a href="{{route('home.contacts')}}" class="navigation__link">Contact</a>
                 </li>
             </ul>
             </div>
@@ -411,10 +442,10 @@
                 <a href="{{route('cart.index')}}" class="navigation__link">Cart</a>
                 </li>
                 <li class="navigation__item">
-                <a href="about.html" class="navigation__link">About</a>
+                <a href="{{route('home.about')}}" class="navigation__link">About</a>
                 </li>
                 <li class="navigation__item">
-                <a href="contact.html" class="navigation__link">Contact</a>
+                <a href="{{route('home.contacts')}}" class="navigation__link">Contact</a>
                 </li>
             </ul>
             </nav>
@@ -432,10 +463,10 @@
                 </div>
 
                 <div class="search-popup js-hidden-content">
-                <form action="#" method="GET" class="search-field container">
+                <form class="search-field container">
                     <p class="text-uppercase text-secondary fw-medium mb-4">What are you looking for?</p>
                     <div class="position-relative">
-                    <input class="search-field__input search-popup__input w-100 fw-medium" type="text"
+                    <input class="search-field__input search-popup__input w-100 fw-medium" type="text" id="search-input"
                         name="search-keyword" placeholder="Search products" />
                     <button class="btn-icon search-popup__submit" type="submit">
                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -447,18 +478,9 @@
                     </div>
 
                     <div class="search-popup__results">
-                    <div class="sub-menu search-suggestion">
-                        <h6 class="sub-menu__title fs-base">Quicklinks</h6>
-                        <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">New Arrivals</a>
-                        </li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Dresses</a></li>
-                        <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Accessories</a>
-                        </li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Footwear</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Sweatshirt</a></li>
+                        <ul id="box-content-search">
+
                         </ul>
-                    </div>
 
                     <div class="search-result row row-cols-5"></div>
                     </div>
@@ -686,7 +708,59 @@
     <script src="{{ asset('assets/js/plugins/bootstrap-slider.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/swiper.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/countdown.js') }}"></script>
+    
+    <script>
+        $(document).ready(function() {
+
+            // Bloquer la soumission du formulaire si on appuie sur Entrée
+            $("#search-input").on("keydown", function(e) {
+                if (e.keyCode === 13) {
+                    e.preventDefault(); // Empêche d'envoyer le formulaire
+                }
+            });
+
+            // Faire la recherche Ajax normalement
+            $("#search-input").on("keyup", function() {
+                var searchQuery = $(this).val();
+                if (searchQuery.length > 2) {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ route('home.search') }}",
+                        data: { query: searchQuery },
+                        dataType: "json",
+                        success: function(data) {
+                            $("#box-content-search").html(""); // Nettoie avant de rajouter
+
+                            $.each(data, function(index, item) {
+                                var url = "{{ route('shop.product.detail', ['product_slug' => 'slug_placeholder']) }}";
+                                var link = url.replace('slug_placeholder', item.slug); // ATTENTION c'est item.slug PAS limace
+
+                                $("#box-content-search").append(`
+                                    <ul>
+                                        <li class="product-item gap14 mb-10">
+                                            <div class="image no-bg">
+                                                <img src="/uploads/products/thumbnails/${item.image}" alt="${item.name}">
+                                            </div>
+                                            <div class="flex items-center justify-between gap20 flex-grow">
+                                                <div class="name">
+                                                    <a href="${link}" class="body-text">${item.name}</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                `);
+                            });
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
+
     <script src="{{ asset('assets/js/theme.js') }}"></script>
+    <script src="{{ asset('js/sweetalert.min.js') }}"></script>  
+
     @stack("scripts")
 </body>
 
