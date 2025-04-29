@@ -769,4 +769,42 @@ class AdminController extends Controller
 
         return response()->json($results);
     }
+
+    public function editAccount()
+    {
+        $admin = auth()->user(); // utilisateur connecté
+        return view('admin.settings', compact('admin'));
+    }
+
+    public function updateAccount(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'mobile' => 'required|string|max:20',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'old_password' => 'nullable|required_with:new_password|string',
+            'new_password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        // Update basic info
+        $user->update([
+            'name' => $request->name,
+            'mobile' => $request->mobile,
+            'email' => $request->email,
+        ]);
+
+        // Password update if provided
+        if ($request->filled('old_password') && Hash::check($request->old_password, $user->password)) {
+            $user->update([
+                'password' => Hash::make($request->new_password),
+            ]);
+        } elseif ($request->filled('old_password')) {
+            return back()->withErrors(['old_password' => 'The old password is incorrect.']);
+        }
+
+        return back()->with('success', 'Account updated successfully.');
+    }
+
 }

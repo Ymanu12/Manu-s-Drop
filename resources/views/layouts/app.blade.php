@@ -759,8 +759,8 @@
     </script>
 
     <script src="{{ asset('assets/js/theme.js') }}"></script>
-    <script src="{{ asset('js/sweetalert.min.js') }}"></script>  
-
+    <script src="{{ asset('js/sweetalert.min.js') }}"></script> 
+    
     @stack("scripts")
 </body>
 

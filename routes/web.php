@@ -38,8 +38,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/orders', [UserController::class, 'orders'])->name('user.orders');
     Route::get('/user/{order_id}/order_details', [UserController::class, 'order_details'])->name('user.order.details');
     Route::put('/user/order-cancel', [UserController::class, 'order_cancel'])->name('user.order.cancel');
-    Route::get('/user/addresses', [UserController::class, 'address'])->name('user.addresses');
 
+
+    Route::get('/user/addresses', [UserController::class, 'addresses_index'])->name('user.addresses');
+    Route::get('/user/addresses/create', [UserController::class, 'addresses_create'])->name('user.addresses.create');
+    Route::post('/user/addresses', [UserController::class, 'addresses_store'])->name('user.addresses.store');
+    Route::get('/user/addresses/{address}/edit', [UserController::class, 'addresses_edit'])->name('user.addresses.edit');
+    Route::put('/user/addresses/{address}', [UserController::class, 'addresses_update'])->name('user.addresses.update');
+    Route::delete('/user/addresses/{address}', [UserController::class, 'addresses_destroy'])->name('user.addresses.destroy');    
+    Route::post('/user/addresses/{address}/default', [UserController::class, 'addresses_set_default'])->name('user.addresses.set_default');
 
     // 👤 shop
     Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
@@ -134,11 +141,20 @@ Route::middleware('auth')->group(function () {
     });
 
     // ⚙️ Paramètres utilisateur (optionnel)
-    /*
-    Route::get('/settings', [UserController::class, 'edit'])->name('settings');
-    Route::post('/settings/update-profile', [UserController::class, 'updateProfile'])->name('settings.updateProfile');
-    Route::post('/settings/update-password', [UserController::class, 'updatePassword'])->name('settings.updatePassword');
-    Route::post('/settings/update-theme', [UserController::class, 'updateTheme'])->name('settings.updateTheme');
-    Route::delete('/delete-account', [UserController::class, 'deleteAccount'])->name('delete.account');
-    */
+
+    //user
+
+    Route::get('/user/account', [UserController::class, 'account_edit'])->name('user.account.details');
+    Route::post('/user/account', [UserController::class, 'account_update'])->name('user.account.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+
+    //ADM
+
+    Route::get('/admin/settings', [AdminController::class, 'editAccount'])->name('admin.account.edit');
+    Route::post('/admin/settings', [AdminController::class, 'updateAccount'])->name('admin.account.update');
+    Route::delete('/admin/{id}', [UserController::class, 'destroy'])->name('admins.destroy');
+
+
 });
+
