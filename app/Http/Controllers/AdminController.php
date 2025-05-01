@@ -59,8 +59,8 @@ class AdminController extends Controller
                 WHERE YEAR(created_at)=YEAR(NOW()) 
                 GROUP BY YEAR(created_at), MONTH(created_at), DATE_FORMAT(created_at, '%b')
                 ORDER BY MONTH(created_at)
-            ) D ON D.MonthNo=M.id"
-        );
+            ) D ON D.MonthNo=M.id
+        ");
 
         $AmountM = implode(',', collect($monthlyDatas)->pluck('TotalAmount')->toArray());
         $OrderedAmountM = implode(',', collect($monthlyDatas)->pluck('TotalOrderedAmount')->toArray());
