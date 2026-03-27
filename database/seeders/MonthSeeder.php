@@ -24,6 +24,6 @@ class MonthSeeder extends Seeder
             ['name' => 'December'],
         ];
 
-        DB::table('month_names')->insert($months);
+        DB::table('month_names')->insertOrIgnore($months);
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('content')
 <div class="main-content-inner">
@@ -273,17 +273,17 @@
                     var options = {
                         series: [{
                             name: 'Total',
-                            data: [{{ $AmountM }}]
+                            data: {!! json_encode($AmountSeries) !!}
                         }, {
                             name: 'Pending',
-                            data: [{{ $OrderedAmountM }}]
+                            data: {!! json_encode($OrderedSeries) !!}
                         },
                         {
                             name: 'Delivered',
-                            data: [{{ $DeliveredAmountM }}]
+                            data: {!! json_encode($DeliveredSeries) !!}
                         }, {
                             name: 'Canceled',
-                            data: [{{ $CanceledAmountM }}]
+                            data: {!! json_encode($CanceledSeries) !!}
                         }],
                         chart: {
                             type: 'bar',

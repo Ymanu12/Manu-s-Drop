@@ -8,7 +8,7 @@ class Orders extends Model
 {
     public function user()
     {
-        return $this::belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function orderItems()
@@ -18,6 +18,7 @@ class Orders extends Model
 
     public function transaction()
     {
-        return $this::hasOne(Transaction::class);
+        return $this->hasOne(Transaction::class);
     }
 }
+

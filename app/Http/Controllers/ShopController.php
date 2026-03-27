@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use Illuminate\Http\Request;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
     public function index(Request $request)
     {
-        // Nombre de produits par page (par défaut : 12)
-        $size = $request->query('size', 12);
+        $validated = $request->validate([
+            'size' => 'nullable|integer|min:1|max:48',
+            'order' => 'nullable|integer|in:-1,1,2,3,4',
+            'brands' => 'nullable|string|max:255',
+            'categories' => 'nullable|string|max:255',
+        ]);
 
-        // Valeur de tri reçue depuis l'URL
-        $order = $request->query('order', -1);
+        $size = $validated['size'] ?? 12;
+        $order = $validated['order'] ?? -1;
+        $f_brands = $validated['brands'] ?? '';
+        $f_categories = $validated['categories'] ?? '';
 
-        $f_brands = $request->query('brands') ?? '';
-
-        $f_categories = $request->query('categories', '');
-
-        // Définir les colonnes et l'ordre de tri
         switch ($order) {
             case 1:
                 $o_column = 'created_at';
@@ -44,37 +45,67 @@ class ShopController extends Controller
                 $o_order = 'DESC';
                 break;
         }
-        $brands = Brand::with('products')->orderBy('name')->get();
 
+        $brandIds = collect(explode(',', $f_brands))->filter(fn ($value) => ctype_digit($value))->map(fn ($value) => (int) $value)->values();
+        $categoryIds = collect(explode(',', $f_categories))->filter(fn ($value) => ctype_digit($value))->map(fn ($value) => (int) $value)->values();
+
+        $brands = Brand::with('products')->orderBy('name')->get();
         $categories = Category::with('products')->orderBy('name')->get();
 
-        $products = Product::where(function($query) use ($f_brands, $f_categories) {
-            if (!empty($f_brands)) {
-                $query->whereIn('brand_id', explode(',', $f_brands));
-            }
-            if (!empty($f_categories)) {
-                $query->whereIn('category_id', explode(',', $f_categories));
-            }
-        })->orderBy($o_column, $o_order)->paginate($size);
-            
-        // Envoyer les données à la vue shop.blade.php
-        return view('shop', compact('products', 'size', 'order','brands','f_brands','categories'));
+        $products = Product::query()
+            ->when($brandIds->isNotEmpty(), function ($query) use ($brandIds) {
+                $query->whereIn('brand_id', $brandIds->all());
+            })
+            ->when($categoryIds->isNotEmpty(), function ($query) use ($categoryIds) {
+                $query->whereIn('category_id', $categoryIds->all());
+            })
+            ->orderBy($o_column, $o_order)
+            ->paginate($size)
+            ->withQueryString();
+
+        $seo = [
+            'title' => 'Boutique | ' . config('seo.site_name'),
+            'description' => "Parcourez le catalogue Manu's Drop et d�couvrez nos v�tements, accessoires et produits disponibles en ligne.",
+            'canonical' => route('shop.index'),
+            'keywords' => 'boutique, produits, shopping, mode, accessoires, Manu\'s Drop',
+        ];
+
+        return view('shop', compact('products', 'size', 'order', 'brands', 'f_brands', 'categories', 'f_categories', 'seo'));
     }
 
     public function product_details($product_slug)
     {
-        // Trouver le produit avec le slug
         $product = Product::where('slug', $product_slug)->first();
 
-        // Si le produit n'existe pas, erreur 404
         if (!$product) {
             abort(404);
         }
 
-        // Obtenir d'autres produits pour suggestions (max 8)
         $products = Product::where('slug', '<>', $product_slug)->take(8)->get();
+        $price = $product->sale_price ?: $product->regular_price;
+        $seo = [
+            'title' => $product->name . ' | ' . config('seo.site_name'),
+            'description' => str($product->short_description ?: $product->description ?: $product->name)->stripTags()->limit(160)->toString(),
+            'canonical' => route('shop.product.detail', ['product_slug' => $product->slug]),
+            'image' => asset('uploads/products/thumbnails/' . $product->image),
+            'keywords' => implode(', ', array_filter([$product->name, optional($product->category)->name, optional($product->brand)->name, 'achat en ligne'])),
+            'schemas' => [[
+                '@context' => 'https://schema.org',
+                '@type' => 'Product',
+                'name' => $product->name,
+                'description' => str($product->short_description ?: $product->description ?: $product->name)->stripTags()->limit(300)->toString(),
+                'image' => [asset('uploads/products/thumbnails/' . $product->image)],
+                'sku' => $product->SKU,
+                'offers' => [
+                    '@type' => 'Offer',
+                    'priceCurrency' => 'XOF',
+                    'price' => (string) $price,
+                    'availability' => (int) $product->quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+                    'url' => route('shop.product.detail', ['product_slug' => $product->slug]),
+                ],
+            ]],
+        ];
 
-        // Afficher la vue détails
-        return view('details', compact('product', 'products'));
+        return view('details', compact('product', 'products', 'seo'));
     }
 }
