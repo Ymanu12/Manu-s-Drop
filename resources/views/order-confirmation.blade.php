@@ -36,6 +36,16 @@
           </svg>
           <h3>Your order is completed!</h3>
           <p>Thank you. Your order has been received.</p>
+          <div class="mt-4">
+            <a href="{{ route('cart.order.confirmation.pdf', ['order_id' => $order->id]) }}" class="btn btn-primary" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: text-bottom; margin-right: 8px;">
+                <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 21H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Download PDF
+            </a>
+          </div>
         </div>
         <div class="order-info">
           <div class="order-info__item">
@@ -48,7 +58,7 @@
           </div>
           <div class="order-info__item">
             <label>Total</label>
-            <span>${{ number_format($order->total ?? 0, 2) }}</span>
+            <span>${{ number_format((float) ($order->total ?? 0), 2) }}</span>
           </div>
           <div class="order-info__item">
             <label>Payment Method</label>
@@ -73,7 +83,7 @@
                                     {{ $item->product->name ?? 'N/A' }} x {{ $item->quantity }}
                                 </td>
                                 <td class="text-right">
-                                    ${{ number_format($item->price * $item->quantity, 2) }}
+                                    ${{ number_format((float) (($item->price ?? 0) * ($item->quantity ?? 0)), 2) }}
                                 </td>
                             </tr>
                             @endforeach
@@ -88,11 +98,11 @@
                     <tbody>
                         <tr>
                             <th>SUBTOTAL</th>
-                            <td>${{ number_format($order->subtotal ?? 0, 2) }}</td>
+                            <td>${{ number_format((float) ($order->subtotal ?? 0), 2) }}</td>
                         </tr>
                         <tr>
                             <th>DISCOUNT</th>
-                            <td>${{ number_format($order->discount ?? 0, 2) }}</td>
+                            <td>${{ number_format((float) ($order->discount ?? 0), 2) }}</td>
                         </tr>
                         <tr>
                             <th>SHIPPING</th>
@@ -100,11 +110,11 @@
                         </tr>
                         <tr>
                             <th>VAT</th>
-                            <td>${{ number_format($order->tax ?? 0, 2) }}</td>
+                            <td>${{ number_format((float) ($order->tax ?? 0), 2) }}</td>
                         </tr>
                         <tr>
                             <th>TOTAL</th>
-                            <td>${{ number_format($order->total ?? 0, 2) }}</td>
+                            <td>${{ number_format((float) ($order->total ?? 0), 2) }}</td>
                         </tr>
                     </tbody>
                 </table>

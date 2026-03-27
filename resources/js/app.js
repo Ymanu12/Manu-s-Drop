@@ -1,6 +1,7 @@
 import './bootstrap';
 
 const RECAPTCHA_CONFIG_URL = '/recaptcha/config';
+const THEME_STORAGE_KEY = 'theme';
 
 const loadScript = (src) => new Promise((resolve, reject) => {
     const existing = document.querySelector(`script[src="${src}"]`);
@@ -156,8 +157,65 @@ const initRecaptchaV3 = async () => {
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
+        initThemeToggle();
         initRecaptchaV3().catch(() => undefined);
     }, { once: true });
 } else {
+    initThemeToggle();
     initRecaptchaV3().catch(() => undefined);
+}
+
+function initThemeToggle() {
+    const root = document.documentElement;
+    const userTheme = root.dataset.userTheme || 'light';
+    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    const initialTheme = savedTheme || userTheme || 'light';
+
+    applyTheme(initialTheme);
+
+    document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', async (event) => {
+            event.preventDefault();
+
+            const currentTheme = root.getAttribute('data-theme') || 'light';
+            const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            applyTheme(nextTheme);
+            window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+
+            const endpoint = root.dataset.themeUpdateUrl;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            if (!endpoint || !csrfToken) {
+                return;
+            }
+
+            try {
+                await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ theme: nextTheme }),
+                });
+            } catch (error) {
+                // Keep local preference even if sync fails.
+            }
+        });
+    });
+}
+
+function applyTheme(theme) {
+    const root = document.documentElement;
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+
+    root.setAttribute('data-theme', theme);
+
+    if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', theme === 'dark' ? '#111827' : '#ffffff');
+    }
 }

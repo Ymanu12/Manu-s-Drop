@@ -9,3 +9,133 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+:root {
+    --theme-bg: #ffffff;
+    --theme-surface: #ffffff;
+    --theme-surface-soft: #f7f7f9;
+    --theme-border: rgba(17, 24, 39, 0.1);
+    --theme-text: #111827;
+    --theme-text-soft: #6b7280;
+    --theme-accent: #111827;
+}
+
+html[data-theme='dark'] {
+    --theme-bg: #111827;
+    --theme-surface: #18212f;
+    --theme-surface-soft: #0f172a;
+    --theme-border: rgba(255, 255, 255, 0.12);
+    --theme-text: #f9fafb;
+    --theme-text-soft: #cbd5e1;
+    --theme-accent: #f9fafb;
+    color-scheme: dark;
+}
+
+html[data-theme='dark'] body,
+html[data-theme='dark'] .body,
+html[data-theme='dark'] .gradient-bg,
+html[data-theme='dark'] #wrapper,
+html[data-theme='dark'] #page,
+html[data-theme='dark'] .layout-wrap,
+html[data-theme='dark'] .main-content,
+html[data-theme='dark'] .main-content-wrap,
+html[data-theme='dark'] .main-content-inner {
+    background: var(--theme-bg) !important;
+    color: var(--theme-text);
+}
+
+html[data-theme='dark'] .header,
+html[data-theme='dark'] .header-dashboard,
+html[data-theme='dark'] .section-menu-left,
+html[data-theme='dark'] .section-content-right,
+html[data-theme='dark'] .wg-box,
+html[data-theme='dark'] .wg-chart-default,
+html[data-theme='dark'] .card,
+html[data-theme='dark'] .dropdown-menu,
+html[data-theme='dark'] .search-popup,
+html[data-theme='dark'] .search-result,
+html[data-theme='dark'] .cart-table,
+html[data-theme='dark'] .checkout__totals,
+html[data-theme='dark'] .order-complete,
+html[data-theme='dark'] .shopping-cart,
+html[data-theme='dark'] .shop-checkout,
+html[data-theme='dark'] .table,
+html[data-theme='dark'] .table-responsive,
+html[data-theme='dark'] .admin-kpi-card,
+html[data-theme='dark'] .admin-list-item {
+    background: var(--theme-surface) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+}
+
+html[data-theme='dark'] .navigation__link,
+html[data-theme='dark'] .header-tools__item,
+html[data-theme='dark'] .menu-list a,
+html[data-theme='dark'] .body-title,
+html[data-theme='dark'] .body-title-2,
+html[data-theme='dark'] h1,
+html[data-theme='dark'] h2,
+html[data-theme='dark'] h3,
+html[data-theme='dark'] h4,
+html[data-theme='dark'] h5,
+html[data-theme='dark'] h6,
+html[data-theme='dark'] p,
+html[data-theme='dark'] span,
+html[data-theme='dark'] td,
+html[data-theme='dark'] th,
+html[data-theme='dark'] label,
+html[data-theme='dark'] a,
+html[data-theme='dark'] .text-tiny,
+html[data-theme='dark'] .body-text {
+    color: var(--theme-text) !important;
+}
+
+html[data-theme='dark'] input,
+html[data-theme='dark'] textarea,
+html[data-theme='dark'] select,
+html[data-theme='dark'] .form-control,
+html[data-theme='dark'] .search-field__input {
+    background: var(--theme-surface-soft) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+}
+
+html[data-theme='dark'] .btn,
+html[data-theme='dark'] .tf-button {
+    border-color: var(--theme-border) !important;
+}
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    background: transparent;
+    color: var(--theme-accent);
+    cursor: pointer;
+    transition: transform .2s ease;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-1px);
+}
+
+.theme-toggle svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.theme-toggle__icon-dark {
+    display: none;
+}
+
+html[data-theme='dark'] .theme-toggle__icon-light {
+    display: none;
+}
+
+html[data-theme='dark'] .theme-toggle__icon-dark {
+    display: block;
+}

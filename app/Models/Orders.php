@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Orders extends Model
 {
+    protected $casts = [
+        'subtotal' => 'float',
+        'discount' => 'float',
+        'tax' => 'float',
+        'total' => 'float',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -21,4 +28,3 @@ class Orders extends Model
         return $this->hasOne(Transaction::class);
     }
 }
-

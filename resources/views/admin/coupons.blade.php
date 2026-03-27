@@ -61,8 +61,8 @@
                                 <td>{{$coupon->id}}</td>
                                 <td>{{$coupon->code}}</td>
                                 <td>{{ ucfirst($coupon->type) }}</td>
-                                <td>{{ $coupon->value, 2 }}</td>
-                                <td>${{ number_format($coupon->cart_value, 2) }}</td>
+                                <td>{{ number_format((float) ($coupon->value ?? 0), 2) }}</td>
+                                <td>${{ number_format((float) ($coupon->cart_value ?? 0), 2) }}</td>
                                 <td>{{ $coupon->expiry_date }}</td>
                                 <td>
                                     <div class="list-icon-function">

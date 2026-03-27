@@ -22,4 +22,9 @@ class AdminAuditLog extends Model
     protected $casts = [
         'payload' => 'array',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -1,18 +1,26 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-user-theme="{{ auth()->user()->theme ?? 'light' }}" data-theme-update-url="{{ route('user.theme.update') }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="theme-color" content="#ffffff">
+        <script>
+            (function () {
+                var userTheme = document.documentElement.dataset.userTheme || 'light';
+                var savedTheme = localStorage.getItem('theme');
+                document.documentElement.setAttribute('data-theme', savedTheme || userTheme || 'light');
+            })();
+        </script>
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <!-- <meta name="author" content="surfside media" /> -->
-        <link rel="stylesheet" href="{{ asset('build/assets/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/animate.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/animation.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.css') }}">
@@ -45,8 +53,8 @@
                         <div class="section-menu-left">
                             <div class="box-logo">
                                 <a href="{{route('admin.index')}}" id="site-logo-inner">
-                                    <img class="" id="logo_header" alt="" src="{{ asset('images/logo/logo.png') }}"
-                                        data-light="{{ asset('images/logo/logo.png') }}" data-dark="{{ asset('images/logo/logo.png') }}">
+                                    <img class="" id="logo_header" alt="Manu's Drop" src="{{ asset('favicon.ico') }}"
+                                        data-light="{{ asset('favicon.ico') }}" data-dark="{{ asset('favicon.ico') }}">
                                 </a>
                                 <div class="button-show-hide">
                                     <i class="icon-menu-left"></i>
@@ -191,9 +199,9 @@
                                 <div class="wrap">
                                     <div class="header-left">
                                         <a href="index-2.html">
-                                            <img class="" id="logo_header_mobile" alt="" src="{{ asset('images/logo/logo.png') }}"
-                                                data-light="{{ asset('images/logo/logo.png') }}" data-dark="{{ asset('images/logo/logo.png') }}"
-                                                data-width="154px" data-height="52px" data-retina="{{ asset('images/logo/logo.png') }}">
+                                            <img class="" id="logo_header_mobile" alt="Manu's Drop" src="{{ asset('favicon.ico') }}"
+                                                data-light="{{ asset('favicon.ico') }}" data-dark="{{ asset('favicon.ico') }}"
+                                                data-width="154px" data-height="52px" data-retina="{{ asset('favicon.ico') }}">
                                         </a>
                                         <div class="button-show-hide">
                                             <i class="icon-menu-left"></i>
@@ -202,7 +210,7 @@
 
                                         <form class="form-search flex-grow">
                                             <fieldset class="name">
-                                                <input type="text" placeholder="Search here..." class="show-search" id="search-input" name="name"
+                                                <input type="text" placeholder="Search here..." class="show-search" id="search-input" name="name" autocomplete="search"
                                                     tabindex="2" value="" aria-required="true" required="">
                                             </fieldset>
                                             <div class="button-submit">
@@ -217,13 +225,29 @@
 
                                     </div>
                                     <div class="header-grid">
+                                        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">
+                                            <svg class="theme-toggle__icon-light" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 3V5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                                <path d="M12 18.5V21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                                <path d="M3 12H5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                                <path d="M18.5 12H21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                                <path d="M5.64 5.64L7.41 7.41" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                                <path d="M16.59 16.59L18.36 18.36" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                                <path d="M16.59 7.41L18.36 5.64" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                                <path d="M5.64 18.36L7.41 16.59" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+                                            </svg>
+                                            <svg class="theme-toggle__icon-dark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                                            </svg>
+                                        </button>
 
                                         <div class="popup-wrap message type-header">
                                             <div class="dropdown">
                                                 <button class="btn btn-secondary dropdown-toggle" type="button"
                                                     id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <span class="header-item">
-                                                        <span class="text-tiny">1</span>
+                                                        <span class="text-tiny">{{ $adminHeaderData['notificationCount'] ?? 0 }}</span>
                                                         <i class="icon-bell"></i>
                                                     </span>
                                                 </button>
@@ -232,55 +256,33 @@
                                                     <li>
                                                         <h6>Notifications</h6>
                                                     </li>
-                                                    <li>
-                                                        <div class="message-item item-1">
-                                                            <div class="image">
-                                                                <i class="icon-noti-1"></i>
-                                                            </div>
-                                                            <div>
-                                                                <div class="body-title-2">Discount available</div>
-                                                                <div class="text-tiny">Morbi sapien massa, ultricies at rhoncus
-                                                                    at, ullamcorper nec diam</div>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="message-item item-2">
-                                                            <div class="image">
-                                                                <i class="icon-noti-2"></i>
-                                                            </div>
-                                                            <div>
-                                                                <div class="body-title-2">Account has been verified</div>
-                                                                <div class="text-tiny">Mauris libero ex, iaculis vitae rhoncus
-                                                                    et</div>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="message-item item-3">
-                                                            <div class="image">
-                                                                <i class="icon-noti-3"></i>
-                                                            </div>
-                                                            <div>
-                                                                <div class="body-title-2">Order shipped successfully</div>
-                                                                <div class="text-tiny">Integer aliquam eros nec sollicitudin
-                                                                    sollicitudin</div>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="message-item item-4">
-                                                            <div class="image">
-                                                                <i class="icon-noti-4"></i>
-                                                            </div>
-                                                            <div>
-                                                                <div class="body-title-2">Order pending: <span>ID 305830</span>
+                                                    @forelse(($adminHeaderData['notifications'] ?? collect()) as $notification)
+                                                        <li>
+                                                            <a href="{{ $notification['url'] }}" class="message-item item-1">
+                                                                <div class="image">
+                                                                    <i class="{{ $notification['icon'] }}"></i>
                                                                 </div>
-                                                                <div class="text-tiny">Ultricies at rhoncus at ullamcorper</div>
+                                                                <div>
+                                                                    <div class="body-title-2">{{ $notification['title'] }}</div>
+                                                                    <div class="text-tiny">{{ $notification['message'] }}</div>
+                                                                    <div class="text-tiny mt-4">{{ $notification['time'] }}</div>
+                                                                </div>
+                                                            </a>
+                                                        </li>
+                                                    @empty
+                                                        <li>
+                                                            <div class="message-item item-1">
+                                                                <div class="image">
+                                                                    <i class="icon-bell"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="body-title-2">No new notifications</div>
+                                                                    <div class="text-tiny">New orders, contact messages, and low stock alerts will appear here.</div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </li>
-                                                    <li><a href="#" class="tf-button w-full">View all</a></li>
+                                                        </li>
+                                                    @endforelse
+                                                    <li><a href="{{ route('admin.orders') }}" class="tf-button w-full">View orders</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -294,53 +296,56 @@
                                                             <img src="{{ asset('images/avatar/user-1.png') }}" alt="">
                                                         </span>
                                                         <span class="flex flex-column">
-                                                            <span class="body-title mb-2">Kristin Watson</span>
-                                                            <span class="text-tiny">Admin</span>
+                                                            <span class="body-title mb-2">{{ auth()->user()->name ?? 'Administrator' }}</span>
+                                                            <span class="text-tiny">{{ auth()->user()->email ?? 'Admin' }}</span>
                                                         </span>
                                                     </span>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end has-content"
                                                     aria-labelledby="dropdownMenuButton3">
                                                     <li>
-                                                        <a href="#" class="user-item">
+                                                        <a href="{{ route('admin.account.edit') }}" class="user-item">
                                                             <div class="icon">
                                                                 <i class="icon-user"></i>
                                                             </div>
-                                                            <div class="body-title-2">Account</div>
+                                                            <div class="body-title-2">Admin account</div>
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="user-item">
-                                                            <div class="icon">
-                                                                <i class="icon-mail"></i>
-                                                            </div>
-                                                            <div class="body-title-2">Inbox</div>
-                                                            <div class="number">27</div>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="user-item">
+                                                        <a href="{{ route('admin.orders') }}" class="user-item">
                                                             <div class="icon">
                                                                 <i class="icon-file-text"></i>
                                                             </div>
-                                                            <div class="body-title-2">Taskboard</div>
+                                                            <div class="body-title-2">Orders</div>
+                                                            <div class="number">{{ $adminHeaderData['notificationCount'] ?? 0 }}</div>
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <a href="#" class="user-item">
+                                                        <a href="{{ route('admin.contacts') }}" class="user-item">
                                                             <div class="icon">
-                                                                <i class="icon-headphones"></i>
+                                                                <i class="icon-mail"></i>
                                                             </div>
-                                                            <div class="body-title-2">Support</div>
+                                                            <div class="body-title-2">Messages</div>
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <a href="login.html" class="user-item">
+                                                        <a href="{{ route('home.index') }}" class="user-item">
                                                             <div class="icon">
-                                                                <i class="icon-log-out"></i>
+                                                                <i class="icon-grid"></i>
                                                             </div>
-                                                            <div class="body-title-2">Log out</div>
+                                                            <div class="body-title-2">View store</div>
                                                         </a>
+                                                    </li>
+                                                    <li>
+                                                        <form method="POST" action="{{ route('logout') }}">
+                                                            @csrf
+                                                            <button type="submit" class="user-item" style="width: 100%; border: 0; background: transparent; text-align: left;">
+                                                                <div class="icon">
+                                                                    <i class="icon-log-out"></i>
+                                                                </div>
+                                                                <div class="body-title-2">Log out</div>
+                                                            </button>
+                                                        </form>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -363,7 +368,7 @@
             </div>
 
             <script src="{{ asset('js/jquery.min.js') }}"></script>
-            <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('assets/js/plugins/bootstrap.bundle.min.js') }}"></script>
             <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>   
             <script src="{{ asset('js/sweetalert.min.js') }}"></script>    
             <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
@@ -415,6 +420,64 @@
                         }
                     });
 
+                });
+            </script>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const dropdownButtons = [
+                        document.getElementById('dropdownMenuButton2'),
+                        document.getElementById('dropdownMenuButton3')
+                    ].filter(Boolean);
+
+                    const closeHeaderDropdowns = function () {
+                        dropdownButtons.forEach(function (button) {
+                            const dropdown = button.closest('.dropdown');
+                            const menu = dropdown ? dropdown.querySelector('.dropdown-menu') : null;
+
+                            button.classList.remove('show');
+                            button.setAttribute('aria-expanded', 'false');
+
+                            if (menu) {
+                                menu.classList.remove('show');
+                            }
+                        });
+                    };
+
+                    dropdownButtons.forEach(function (button) {
+                        button.addEventListener('click', function (event) {
+                            event.preventDefault();
+                            event.stopPropagation();
+
+                            const dropdown = button.closest('.dropdown');
+                            const menu = dropdown ? dropdown.querySelector('.dropdown-menu') : null;
+                            const isOpen = menu ? menu.classList.contains('show') : false;
+
+                            closeHeaderDropdowns();
+
+                            if (!isOpen && menu) {
+                                button.classList.add('show');
+                                button.setAttribute('aria-expanded', 'true');
+                                menu.classList.add('show');
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('.header-grid .dropdown-menu').forEach(function (menu) {
+                        menu.addEventListener('click', function (event) {
+                            event.stopPropagation();
+                        });
+                    });
+
+                    document.addEventListener('click', function () {
+                        closeHeaderDropdowns();
+                    });
+
+                    document.addEventListener('keydown', function (event) {
+                        if (event.key === 'Escape') {
+                            closeHeaderDropdowns();
+                        }
+                    });
                 });
             </script>
 

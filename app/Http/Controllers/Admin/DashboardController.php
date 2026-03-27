@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminAuditLog;
+use App\Models\Contact;
 use App\Models\Orders;
 use App\Models\Product;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -15,7 +19,7 @@ class DashboardController extends Controller
     {
         Gate::authorize('access-admin');
 
-        $orders = Orders::orderBy('created_at', 'DESC')->get()->take(10);
+        $orders = Orders::with('orderItems')->orderBy('created_at', 'DESC')->take(10)->get();
 
         $dashboardDatas = DB::select(" 
             SELECT 
@@ -62,7 +66,62 @@ class DashboardController extends Controller
 
         $dashboard = $dashboardDatas[0] ?? null;
 
-        return view('admin.index', compact('orders', 'dashboard', 'dashboardDatas', 'AmountSeries', 'OrderedSeries', 'DeliveredSeries', 'CanceledSeries', 'TotalAmount', 'TotalOrderedAmount', 'TotalDeliveredAmount', 'TotalCanceledAmount'));
+        $today = Carbon::today();
+        $weekStart = Carbon::now()->startOfWeek();
+
+        $todayOrdersCount = Orders::whereDate('created_at', $today)->count();
+        $todayRevenue = (float) Orders::whereDate('created_at', $today)->sum('total');
+        $todayDeliveredCount = Orders::where('status', 'delivered')->whereDate('updated_at', $today)->count();
+        $pendingOrdersCount = Orders::where('status', 'ordered')->count();
+
+        $weeklyRevenue = (float) Orders::whereBetween('created_at', [$weekStart, now()])->sum('total');
+        $averageOrderValue = (float) Orders::avg('total');
+        $newCustomersThisMonth = User::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count();
+        $newMessagesCount = Contact::whereDate('created_at', '>=', now()->subDays(7))->count();
+
+        $lowStockProducts = Product::query()
+            ->select('id', 'name', 'quantity', 'stock_status', 'updated_at')
+            ->where('quantity', '<=', 5)
+            ->orderBy('quantity')
+            ->take(5)
+            ->get();
+
+        $recentMessages = Contact::query()
+            ->select('id', 'name', 'email', 'phone', 'comment', 'created_at')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $recentActivities = AdminAuditLog::query()
+            ->with('user')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('admin.index', compact(
+            'orders',
+            'dashboard',
+            'dashboardDatas',
+            'AmountSeries',
+            'OrderedSeries',
+            'DeliveredSeries',
+            'CanceledSeries',
+            'TotalAmount',
+            'TotalOrderedAmount',
+            'TotalDeliveredAmount',
+            'TotalCanceledAmount',
+            'todayOrdersCount',
+            'todayRevenue',
+            'todayDeliveredCount',
+            'pendingOrdersCount',
+            'weeklyRevenue',
+            'averageOrderValue',
+            'newCustomersThisMonth',
+            'newMessagesCount',
+            'lowStockProducts',
+            'recentMessages',
+            'recentActivities'
+        ));
     }
 
     public function search(Request $request)
@@ -82,5 +141,4 @@ class DashboardController extends Controller
         return response()->json($results);
     }
 }
-
 

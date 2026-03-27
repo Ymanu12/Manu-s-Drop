@@ -40,11 +40,11 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="shopping-cart__product-price">${{ number_format($item->price, 2) }}</span>
+                                <span class="shopping-cart__product-price">${{ number_format((float) ($item->price ?? 0), 2) }}</span>
                             </td>
                             <td>{{ $item->qty }}</td>
                             <td>
-                                <span class="shopping-cart__subtotal">${{ number_format($item->subtotal(), 2) }}</span>
+                                <span class="shopping-cart__subtotal">${{ number_format((float) ($item->subtotal() ?? 0), 2) }}</span>
                             </td>
                             <td>
                                 <div class="row">

@@ -191,6 +191,22 @@ class UserController extends Controller
         return view('user.account-details');
     }
 
+    public function update_theme(Request $request)
+    {
+        $validated = $request->validate([
+            'theme' => 'required|in:light,dark',
+        ]);
+
+        $user = Auth::user();
+        $user->theme = $validated['theme'];
+        $user->save();
+
+        return response()->json([
+            'status' => 'ok',
+            'theme' => $user->theme,
+        ]);
+    }
+
     protected function ensureAddressOwnership(Address $address): void
     {
         if ((int) $address->user_id !== (int) Auth::id()) {

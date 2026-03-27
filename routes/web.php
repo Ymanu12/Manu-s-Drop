@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     Route::post('/place-an-order', [CartController::class, 'place_an_order'])->name('cart.place.an.order');
     Route::get('/order-confirmation', [CartController::class, 'order_confirmation'])->name('cart.order.confirmation');
+    Route::get('/order-confirmation/pdf', [CartController::class, 'download_order_confirmation_pdf'])->name('cart.order.confirmation.pdf');
     Route::post('/cart/apply-coupon', [CartController::class, 'apply_coupon_code'])->name('cart.coupon.apply');
     Route::delete('/cart/remove-coupon', [CartController::class, 'remove_coupon_code'])->name('cart.coupon.remove');
 
@@ -100,6 +101,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/user/account', [UserController::class, 'account_edit'])->name('user.account.details');
     Route::post('/user/account', [UserController::class, 'account_update'])->name('user.account.update');
+    Route::post('/user/theme', [UserController::class, 'update_theme'])->name('user.theme.update');
 });
 
 Route::middleware(['auth', 'auth.admin'])->group(function () {
@@ -165,4 +167,3 @@ Route::middleware(['auth', 'auth.admin'])->group(function () {
     Route::get('/admin/settings', [AdminAccountController::class, 'editAccount'])->name('admin.account.edit');
     Route::post('/admin/settings', [AdminAccountController::class, 'updateAccount'])->name('admin.account.update');
 });
-

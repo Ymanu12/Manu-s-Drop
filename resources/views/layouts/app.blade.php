@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-user-theme="{{ auth()->user()->theme ?? 'light' }}" @auth data-theme-update-url="{{ route('user.theme.update') }}" @endauth>
 <head>
     @php
         $routeName = \Illuminate\Support\Facades\Route::currentRouteName();
         $noIndexPatterns = ['admin.*', 'user.*', 'cart.*', 'wishlist.*', 'login', 'register', 'password.*'];
         $robots = str($routeName)->is($noIndexPatterns) ? 'noindex, nofollow' : 'index, follow';
         $siteName = config('seo.site_name', config('app.name', "Manu's Drop"));
-        $defaultImage = config('seo.default_image', '/assets/images/logo.png');
+        $defaultImage = config('seo.default_image', '/favicon.ico');
         $defaultImageUrl = str_starts_with($defaultImage, 'http') ? $defaultImage : url($defaultImage);
         $seoData = array_merge([
             'title' => config('seo.default_title', $siteName),
@@ -45,13 +45,20 @@
     <meta name="robots" content="{{ $seoData['robots'] }}">
     <meta name="author" content="{{ $siteName }}">
     <meta name="theme-color" content="#ffffff">
+    <script>
+        (function () {
+            var userTheme = document.documentElement.dataset.userTheme || 'light';
+            var savedTheme = localStorage.getItem('theme');
+            document.documentElement.setAttribute('data-theme', savedTheme || userTheme || 'light');
+        })();
+    </script>
     @if(!empty($seoData['keywords']))
         <meta name="keywords" content="{{ $seoData['keywords'] }}">
     @endif
 
     <title>{{ $seoData['title'] }}</title>
     <link rel="canonical" href="{{ $seoData['canonical'] }}">
-    <link rel="icon" href="{{ asset('assets/images/logo.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ $siteName }}">
@@ -482,7 +489,7 @@
         <div class="header-desk header-desk_type_1">
             <div class="logo">
             <a href="{{route('home.index')}}">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Uomo" class="logo__image d-block" />
+                <img src="{{ asset('favicon.ico') }}" alt="Manu's Drop" class="logo__image d-block" />
             </a>
             </div>
 
@@ -523,7 +530,7 @@
                     <p class="text-uppercase text-secondary fw-medium mb-4">What are you looking for?</p>
                     <div class="position-relative">
                     <input class="search-field__input search-popup__input w-100 fw-medium" type="text" id="search-input"
-                        name="search-keyword" placeholder="Search products" />
+                        name="search-keyword" placeholder="Search products" autocomplete="search" />
                     <button class="btn-icon search-popup__submit" type="submit">
                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -569,6 +576,23 @@
                 </div>
             @endauth
 
+
+            <button type="button" class="theme-toggle header-tools__item" data-theme-toggle aria-label="Toggle color theme">
+                <svg class="theme-toggle__icon-light" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3V5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M12 18.5V21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M3 12H5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M18.5 12H21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M5.64 5.64L7.41 7.41" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M16.59 16.59L18.36 18.36" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M16.59 7.41L18.36 5.64" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M5.64 18.36L7.41 16.59" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+                <svg class="theme-toggle__icon-dark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                </svg>
+            </button>
 
             <a href="{{route('wishlist.index')}}" class="header-tools__item header-tools__cart">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -821,5 +845,3 @@
 </body>
 
 </html>
-
-
