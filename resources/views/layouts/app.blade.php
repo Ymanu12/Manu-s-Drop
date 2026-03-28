@@ -712,7 +712,7 @@
                 </li>
                 <li class="sub-menu__item"><a href="store_location.html" class="menu-link menu-link_us-s">Find a Store</a>
                 </li>
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Legal & Privacy</a></li>
+                <li class="sub-menu__item"><a href="{{route('privacy.policy')}}" class="menu-link menu-link_us-s">Legal & Privacy</a></li>
                 <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Gift Card</a></li>
             </ul>
             </div>
@@ -734,7 +734,7 @@
         <div class="container d-md-flex align-items-center">
             <span class="footer-copyright me-auto">©2024 ManuDibango</span>
             <div class="footer-settings d-md-flex align-items-center">
-            <a href="privacy-policy.html">Privacy Policy</a> &nbsp;|&nbsp; <a href="terms-conditions.html">Terms &amp;
+            <a href="{{route('privacy.policy')}}">Privacy Policy</a> &nbsp;|&nbsp; <a href="terms-conditions.html">Terms &amp;
                 Conditions</a>
             </div>
         </div>
