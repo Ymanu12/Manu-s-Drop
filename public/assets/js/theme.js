@@ -1339,9 +1339,15 @@ function pureFadeOut(e) {
     window.location.href='./shop_order_complete.html';
   });
 
-  document.querySelector('.js-show-register').addEventListener('click', function(e) {
-    document.querySelector(this.getAttribute("href")).click();
-  });
+  var showRegisterTrigger = document.querySelector('.js-show-register');
+  if (showRegisterTrigger) {
+    showRegisterTrigger.addEventListener('click', function(e) {
+      var registerTarget = document.querySelector(this.getAttribute("href"));
+      if (registerTarget) {
+        registerTarget.click();
+      }
+    });
+  }
 
   $('button.js-add-wishlist, a.add-to-wishlist').off('click').on('click', function() {
     if($(this).hasClass("active"))

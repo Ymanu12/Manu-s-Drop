@@ -65,13 +65,13 @@
                 <td>
                   <div class="qty-control position-relative">
                     <input type="number" name="quantity" value="{{$item->qty}}" min="1" class="qty-control__number text-center">
-                    {{-- Diminuer quantité --}}
+                    {{-- Decrease quantity --}}
                     <form method="POST" action="{{ route('cart.decrease', ['rowId' => $item->rowId]) }}">
                         @csrf
                         <div class="qty-control__reduce">-</div>
                     </form>
 
-                    {{-- Augmenter quantité --}}
+                    {{-- Increase quantity --}}
                     <form method="POST" action="{{ route('cart.increase', ['rowId' => $item->rowId]) }}">
                         @csrf
                         <div class="qty-control__increase">+</div>
@@ -212,16 +212,12 @@
 
         $('.qty-control__reduce').on('click', function(){
             $(this).closest('form').submit();
-        });remove-cart
+        });
 
-        $(document).ready(function () {
-            $('.remove-cart').on('click', function(e){
-                e.preventDefault(); // empêche l'action par défaut du lien
-                $(this).closest('form').submit(); // soumet le formulaire autour
-            });
+        $('.remove-cart').on('click', function(e){
+            e.preventDefault();
+            $(this).closest('form').submit();
         });
     });
 </script>
 @endpush
-
-
