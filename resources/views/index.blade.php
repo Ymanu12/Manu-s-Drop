@@ -51,7 +51,7 @@
         </div>
       </div>
     </section>
-    <div class="container mw-1620 bg-white border-radius-10">
+    <div class="container mw-1620 md:rounded-xl bg-white md:border md:border-slate-200/70 border-radius-10 md:shadow-sm transition-colors dark:md:border-slate-800 dark:bg-slate-900">
       <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
       <section class="category-carousel container">
         <h2 class="section-title text-center mb-3 pb-xl-2 mb-xl-4">You Might Like</h2>
@@ -99,7 +99,7 @@
                 <div class="swiper-slide">
                     <img loading="lazy" class="w-100 h-auto mb-3" src="{{ asset($category->image) }}" alt="{{ $category->name }}" width="124" height="124">
                     <div class="text-center">
-                        <a href="{{ route('shop.index', ['categories' => $category->id]) }}" class="menu-link fw-medium">
+                        <a href="{{ route('shop.index', ['categories' => $category->id]) }}" class="menu-link fw-medium text-slate-800 transition-colors dark:text-slate-100">
                             {{ $category->name }}
                         </a>
                     </div>
@@ -134,7 +134,7 @@
             <h2 class="fw-bold">Up to 60% Off</h2>
 
             <div class="position-relative d-flex align-items-center text-center pt-xxl-4 js-countdown mb-3"
-              data-date="18-3-2024" data-time="06:50">
+              data-date="{{ now()->addDays(15)->format('j-n-Y') }}" data-time="06:50">
               <div class="day countdown-unit">
                 <span class="countdown-num d-block"></span>
                 <span class="countdown-word text-uppercase text-secondary">Days</span>
@@ -210,29 +210,68 @@
                             @if($sproduct->sale_price)
                               <s>${{$sproduct->regular_price}}</s> {{$sproduct->sale_price}}
                             @else
-                              $($sproduct->regular_price)
+                              ${{$sproduct->regular_price}}
                             @endif
                           </span>
                         </div>
 
                         <div
-                          class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
-                          <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart js-open-aside"
-                            data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
-                          <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-quick-view"
-                            data-bs-toggle="modal" data-bs-target="#quickView" title="Quick view">
+                          class="anim_appear-bottom product-card__actions position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
+                          @if(Cart::instance('cart')->content()->where('id',$sproduct->id)->count()>0)
+                          <a href="{{route('cart.index')}}" class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart"
+                            title="Go to Cart">Go to Cart</a>
+                          @else
+                          <form name="addtocart-form" method="POST" action="{{route('cart.add')}}" class="me-4">
+                            @csrf
+                            <input type="hidden" name="id" value="{{$sproduct->id}}">
+                            <input type="hidden" name="quantity" value="1">
+                            <input type="hidden" name="name" value="{{$sproduct->name}}">
+                            <input type="hidden" name="price" value="{{$sproduct->sale_price == '' ? $sproduct->regular_price : $sproduct->sale_price}}">
+                            <button type="submit" class="btn-link btn-link_lg text-uppercase fw-medium js-add-cart js-open-aside"
+                              data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+                          </form>
+                          @endif
+                          <button type="button" class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-quick-view"
+                            data-bs-toggle="modal" data-bs-target="#quickViewModal"
+                            data-product-name="{{$sproduct->name}}"
+                            data-product-url="{{route('shop.product.detail', ['product_slug' => $sproduct->slug])}}"
+                            data-product-image="{{asset('uploads/products')}}/{{$sproduct->image}}"
+                            data-product-price="{{$sproduct->sale_price == '' ? $sproduct->regular_price : $sproduct->sale_price}}"
+                            data-product-regular-price="{{$sproduct->regular_price}}"
+                            data-product-sale-price="{{$sproduct->sale_price}}"
+                            title="Quick view">
                             <span class="d-none d-xxl-block">Quick View</span>
                             <span class="d-block d-xxl-none"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <use href="#icon_view" />
                               </svg></span>
                           </button>
-                          <button class="pc__btn-wl bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <use href="#icon_heart" />
-                            </svg>
-                          </button>
+                          @if(Cart::instance('wishlist')->content()->where('id',$sproduct->id)->count()>0)
+                          <form data-recaptcha-ignore="1" data-wishlist-toggle="1" data-product-id="{{$sproduct->id}}" method="POST" action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance('wishlist')->content()->where('id', $sproduct->id)->first()->rowId]) }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="pc__btn-wl wishlist-icon-btn is-active border-0 js-add-wishlist" title="Remove To Wishlist">
+                              <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#icon_heart" />
+                              </svg>
+                            </button>
+                          </form>
+                          @else
+                          <form data-recaptcha-ignore="1" data-wishlist-toggle="1" data-product-id="{{$sproduct->id}}" method="POST" action="{{route('wishlist.add')}}">
+                            @csrf
+                            <input type="hidden" name="id" value="{{$sproduct->id}}">
+                            <input type="hidden" name="name" value="{{$sproduct->name}}">
+                            <input type="hidden" name="price" value="{{$sproduct->sale_price == '' ? $sproduct->regular_price : $sproduct->sale_price}}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="pc__btn-wl wishlist-icon-btn border-0 js-add-wishlist" title="Add To Wishlist">
+                              <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#icon_heart" />
+                              </svg>
+                            </button>
+                          </form>
+                          @endif
                         </div>
                       </div>
                     </div>
@@ -257,7 +296,7 @@
               </div>
               <div class="category-banner__item-content">
                 <h3 class="mb-0">Blazers</h3>
-                <a href="#" class="btn-link default-underline text-uppercase fw-medium">Shop Now</a>
+                <a href="{{ route('shop.index') }}" class="btn-link default-underline text-uppercase fw-medium">Shop Now</a>
               </div>
             </div>
           </div>
@@ -270,7 +309,7 @@
               </div>
               <div class="category-banner__item-content">
                 <h3 class="mb-0">Sportswear</h3>
-                <a href="#" class="btn-link default-underline text-uppercase fw-medium">Shop Now</a>
+                <a href="{{ route('shop.index') }}" class="btn-link default-underline text-uppercase fw-medium">Shop Now</a>
               </div>
             </div>
           </div>
@@ -300,28 +339,66 @@
                       @if($fproduct->sale_price)
                         <s>${{$fproduct->regular_price}}</s> {{$fproduct->sale_price}}
                       @else
-                        $($fproduct->regular_price)
+                        ${{$fproduct->regular_price}}
                       @endif
                     </span>
                   </div>
 
                   <div
-                    class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
-                    <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart js-open-aside"
-                      data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
-                    <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-quick-view"
-                      data-bs-toggle="modal" data-bs-target="#quickView" title="Quick view">
+                    class="anim_appear-bottom product-card__actions position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
+                    @if(Cart::instance('cart')->content()->where('id',$fproduct->id)->count()>0)
+                    <a href="{{route('cart.index')}}" class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart"
+                      title="Go to Cart">Go to Cart</a>
+                    @else
+                    <form name="addtocart-form" method="POST" action="{{route('cart.add')}}" class="me-4">
+                      @csrf
+                      <input type="hidden" name="id" value="{{$fproduct->id}}">
+                      <input type="hidden" name="quantity" value="1">
+                      <input type="hidden" name="name" value="{{$fproduct->name}}">
+                      <input type="hidden" name="price" value="{{$fproduct->sale_price == '' ? $fproduct->regular_price : $fproduct->sale_price}}">
+                      <button type="submit" class="btn-link btn-link_lg text-uppercase fw-medium js-add-cart js-open-aside"
+                        data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+                    </form>
+                    @endif
+                    <button type="button" class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-quick-view"
+                      data-bs-toggle="modal" data-bs-target="#quickViewModal"
+                      data-product-name="{{$fproduct->name}}"
+                      data-product-url="{{route('shop.product.detail', ['product_slug' => $fproduct->slug])}}"
+                      data-product-image="{{asset('uploads/products')}}/{{$fproduct->image}}"
+                      data-product-price="{{$fproduct->sale_price == '' ? $fproduct->regular_price : $fproduct->sale_price}}"
+                      data-product-regular-price="{{$fproduct->regular_price}}"
+                      data-product-sale-price="{{$fproduct->sale_price}}"
+                      title="Quick view">
                       <span class="d-none d-xxl-block">Quick View</span>
                       <span class="d-block d-xxl-none"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                           xmlns="http://www.w3.org/2000/svg">
                           <use href="#icon_view" />
                         </svg></span>
                     </button>
-                    <button class="pc__btn-wl bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <use href="#icon_heart" />
-                      </svg>
-                    </button>
+                    @if(Cart::instance('wishlist')->content()->where('id',$fproduct->id)->count()>0)
+                    <form data-recaptcha-ignore="1" data-wishlist-toggle="1" data-product-id="{{$fproduct->id}}" method="POST" action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance('wishlist')->content()->where('id', $fproduct->id)->first()->rowId]) }}">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="pc__btn-wl wishlist-icon-btn is-active border-0 js-add-wishlist" title="Remove To Wishlist">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <use href="#icon_heart" />
+                        </svg>
+                      </button>
+                    </form>
+                    @else
+                    <form data-recaptcha-ignore="1" data-wishlist-toggle="1" data-product-id="{{$fproduct->id}}" method="POST" action="{{route('wishlist.add')}}">
+                      @csrf
+                      <input type="hidden" name="id" value="{{$fproduct->id}}">
+                      <input type="hidden" name="name" value="{{$fproduct->name}}">
+                      <input type="hidden" name="price" value="{{$fproduct->sale_price == '' ? $fproduct->regular_price : $fproduct->sale_price}}">
+                      <input type="hidden" name="quantity" value="1">
+                      <button type="submit" class="pc__btn-wl wishlist-icon-btn border-0 js-add-wishlist" title="Add To Wishlist">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <use href="#icon_heart" />
+                        </svg>
+                      </button>
+                    </form>
+                    @endif
                   </div>
                 </div>
               </div>
@@ -329,8 +406,8 @@
           @endforeach
         </div><!-- /.row -->
 
-        <div class="text-center mt-2">
-          <a class="btn-link btn-link_lg default-underline text-uppercase fw-medium" href="#">Load More</a>
+        <div class="text-center mt-2 text-slate-700 dark:text-slate-200">
+          <a class="btn-link btn-link_lg default-underline text-uppercase fw-medium" href="{{ route('shop.index') }}">Load More</a>
         </div>
       </section>
     </div>

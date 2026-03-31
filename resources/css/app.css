@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+﻿@import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -18,6 +18,14 @@
     --theme-text: #111827;
     --theme-text-soft: #6b7280;
     --theme-accent: #111827;
+    --theme-input-bg: #ffffff;
+    --theme-input-border: rgba(17, 24, 39, 0.12);
+    --theme-input-text: #111827;
+    --theme-input-placeholder: #6b7280;
+    --theme-label: #475569;
+    --theme-label-float: #6b7280;
+    --theme-input-focus-border: rgba(251, 146, 60, 0.35);
+    --theme-input-focus-shadow: 0 0 0 0.2rem rgba(251, 146, 60, 0.12);
 }
 
 html[data-theme='dark'] {
@@ -28,7 +36,124 @@ html[data-theme='dark'] {
     --theme-text: #f9fafb;
     --theme-text-soft: #cbd5e1;
     --theme-accent: #f9fafb;
+    --theme-input-bg: #0f172a;
+    --theme-input-border: rgba(148, 163, 184, 0.28);
+    --theme-input-text: #f9fafb;
+    --theme-input-placeholder: #94a3b8;
+    --theme-label: #cbd5e1;
+    --theme-label-float: #94a3b8;
+    --theme-input-focus-border: rgba(251, 146, 60, 0.45);
+    --theme-input-focus-shadow: 0 0 0 0.2rem rgba(251, 146, 60, 0.16);
     color-scheme: dark;
+}
+
+.form-control,
+.form-select,
+.search-field__input,
+.theme-form-control {
+    background: var(--theme-input-bg);
+    color: var(--theme-input-text);
+    border: 1px solid var(--theme-input-border);
+    caret-color: var(--theme-input-text);
+}
+
+.form-control::placeholder,
+.form-select::placeholder,
+.search-field__input::placeholder,
+.theme-form-control::placeholder,
+textarea::placeholder {
+    color: var(--theme-input-placeholder);
+    opacity: 1;
+}
+
+.form-floating.theme-form-field > .form-control::placeholder,
+.form-floating.theme-form-field > .form-select::placeholder,
+.theme-form-control::placeholder {
+    color: var(--theme-input-text) !important;
+    opacity: 0;
+}
+
+.form-label,
+.form-check-label,
+.form-floating > label {
+    color: var(--theme-label) !important;
+}
+
+.theme-form-field {
+    position: relative;
+}
+
+.form-floating.theme-form-field > .form-control,
+.form-floating.theme-form-field > .form-select,
+.theme-form-field > .theme-form-control,
+.theme-form-field > .form-control,
+.theme-form-field > .form-select {
+    background: var(--theme-input-bg) !important;
+    color: var(--theme-input-text) !important;
+    border-color: var(--theme-input-border) !important;
+    min-height: calc(3.5rem + 2px);
+}
+
+.form-floating.theme-form-field > label,
+.theme-form-field > label {
+    color: var(--theme-label) !important;
+    background: linear-gradient(180deg, transparent 0, transparent .92rem, var(--theme-input-bg) .92rem, var(--theme-input-bg) 100%) !important;
+    width: auto !important;
+    max-width: calc(100% - 1.5rem) !important;
+    height: auto !important;
+    padding: 0 .45rem !important;
+    margin-left: .7rem !important;
+    left: 0 !important;
+    right: auto !important;
+    z-index: 2;
+}
+
+.form-floating.theme-form-field > .form-control:focus,
+.form-floating.theme-form-field > .form-control:not(:placeholder-shown),
+.form-floating.theme-form-field > .form-select:focus,
+.theme-form-control:focus {
+    background: var(--theme-input-bg) !important;
+    color: var(--theme-input-text) !important;
+    border-color: var(--theme-input-focus-border) !important;
+    box-shadow: var(--theme-input-focus-shadow) !important;
+}
+
+.form-floating.theme-form-field > .form-control:focus ~ label,
+.form-floating.theme-form-field > .form-control:not(:placeholder-shown) ~ label,
+.form-floating.theme-form-field > .form-select ~ label,
+.theme-form-field > .form-control:focus ~ label,
+.theme-form-field > .form-control:not(:placeholder-shown) ~ label,
+.theme-form-field > .form-select ~ label {
+    background: linear-gradient(180deg, transparent 0, transparent .92rem, var(--theme-input-bg) .92rem, var(--theme-input-bg) 100%) !important;
+    background-color: var(--theme-input-bg) !important;
+    color: var(--theme-label-float) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.search-field__input:focus,
+.theme-form-control:focus {
+    background: var(--theme-input-bg);
+    color: var(--theme-input-text);
+    border-color: var(--theme-input-focus-border);
+    box-shadow: var(--theme-input-focus-shadow);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-text-fill-color: var(--theme-input-text) !important;
+    -webkit-box-shadow: 0 0 0 1000px var(--theme-input-bg) inset !important;
+    box-shadow: 0 0 0 1000px var(--theme-input-bg) inset !important;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+input:-webkit-autofill ~ label {
+    background: linear-gradient(180deg, transparent 0, transparent .92rem, var(--theme-input-bg) .92rem, var(--theme-input-bg) 100%) !important;
+    background-color: var(--theme-input-bg) !important;
+    color: var(--theme-label-float) !important;
 }
 
 html[data-theme='dark'] body,
@@ -83,26 +208,92 @@ html[data-theme='dark'] p,
 html[data-theme='dark'] span,
 html[data-theme='dark'] td,
 html[data-theme='dark'] th,
-html[data-theme='dark'] label,
-html[data-theme='dark'] a,
 html[data-theme='dark'] .text-tiny,
 html[data-theme='dark'] .body-text {
     color: var(--theme-text) !important;
 }
+
+html[data-theme='dark'] a:not(.swatch-color) {
+    color: var(--theme-text) !important;
+}
+
+html[data-theme='dark'] .badge,
+html[data-theme='dark'] .badge[class*='bg-'] {
+    color: #fff !important;
+}
+
+html[data-theme='dark'] .price-sale {
+    color: #d6001c !important;
+}
+
+html[data-theme='dark'] .pc-label_sale {
+    background-color: #d6001c !important;
+}
+
+html[data-theme='dark'] .pc-label_sale-text {
+    background-color: #222222 !important;
+    color: #fff !important;
+}
+
 
 html[data-theme='dark'] input,
 html[data-theme='dark'] textarea,
 html[data-theme='dark'] select,
 html[data-theme='dark'] .form-control,
 html[data-theme='dark'] .search-field__input {
-    background: var(--theme-surface-soft) !important;
-    color: var(--theme-text) !important;
+    background: var(--theme-input-bg) !important;
+    color: var(--theme-input-text) !important;
+    border-color: var(--theme-input-border) !important;
+    caret-color: var(--theme-input-text);
+}
+
+html[data-theme='dark'] .btn:not(.btn-primary):not(.btn-success):not(.btn-danger):not(.btn-warning):not(.btn-info):not(.btn-dark):not(.btn-outline-primary):not(.btn-outline-secondary):not(.btn-outline-success):not(.btn-outline-info):not(.btn-outline-warning):not(.btn-outline-danger):not(.btn-outline-dark):not(.btn-outline-red):not(.btn-outline-beige),
+html[data-theme='dark'] .tf-button:not(.btn-primary):not(.btn-success):not(.btn-danger):not(.btn-warning):not(.btn-info):not(.btn-dark):not(.btn-outline-primary):not(.btn-outline-secondary):not(.btn-outline-success):not(.btn-outline-info):not(.btn-outline-warning):not(.btn-outline-danger):not(.btn-outline-dark):not(.btn-outline-red):not(.btn-outline-beige) {
     border-color: var(--theme-border) !important;
 }
 
-html[data-theme='dark'] .btn,
-html[data-theme='dark'] .tf-button {
-    border-color: var(--theme-border) !important;
+html[data-theme='dark'] input::placeholder,
+html[data-theme='dark'] textarea::placeholder,
+html[data-theme='dark'] .form-control::placeholder,
+html[data-theme='dark'] .search-field__input::placeholder {
+    color: var(--theme-input-placeholder) !important;
+    opacity: 1;
+}
+
+html[data-theme='dark'] .form-label,
+html[data-theme='dark'] .form-check-label,
+html[data-theme='dark'] .form-floating > label {
+    color: var(--theme-label) !important;
+}
+
+html[data-theme='dark'] .form-floating > .form-control:focus ~ label,
+html[data-theme='dark'] .form-floating > .form-control:not(:placeholder-shown) ~ label,
+html[data-theme='dark'] .form-floating > .form-select ~ label {
+    background: linear-gradient(180deg, transparent 0, transparent .92rem, var(--theme-input-bg) .92rem, var(--theme-input-bg) 100%) !important;
+    background-color: var(--theme-input-bg) !important;
+    color: var(--theme-label-float) !important;
+}
+
+html[data-theme='dark'] .form-control:focus,
+html[data-theme='dark'] .form-select:focus,
+html[data-theme='dark'] .search-field__input:focus {
+    background: var(--theme-input-bg) !important;
+    color: var(--theme-input-text) !important;
+    border-color: var(--theme-input-focus-border) !important;
+    box-shadow: var(--theme-input-focus-shadow) !important;
+}
+
+.swatch-color {
+    color: var(--swatch-color, currentColor);
+}
+
+html[data-theme='dark'] .swatch-color {
+    background-color: transparent !important;
+    border: 1px solid var(--theme-border) !important;
+}
+
+html[data-theme='dark'] .swatch-color::after {
+    background-color: var(--swatch-color, currentColor) !important;
 }
 
 .theme-toggle {
@@ -139,3 +330,7 @@ html[data-theme='dark'] .theme-toggle__icon-light {
 html[data-theme='dark'] .theme-toggle__icon-dark {
     display: block;
 }
+
+
+
+

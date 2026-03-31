@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-user-theme="{{ auth()->user()->theme ?? 'light' }}" @auth data-theme-update-url="{{ route('user.theme.update') }}" @endauth>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased" data-user-theme="{{ auth()->user()->theme ?? 'light' }}" @auth data-theme-update-url="{{ route('user.theme.update') }}" @endauth>
 <head>
     @php
         $routeName = \Illuminate\Support\Facades\Route::currentRouteName();
@@ -47,9 +47,15 @@
     <meta name="theme-color" content="#ffffff">
     <script>
         (function () {
-            var userTheme = document.documentElement.dataset.userTheme || 'light';
+            var root = document.documentElement;
+            var userTheme = root.dataset.userTheme || 'light';
             var savedTheme = localStorage.getItem('theme');
-            document.documentElement.setAttribute('data-theme', savedTheme || userTheme || 'light');
+            var theme = savedTheme || userTheme || 'light';
+            var isDark = theme === 'dark';
+
+            root.classList.toggle('dark', isDark);
+            root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            root.style.colorScheme = isDark ? 'dark' : 'light';
         })();
     </script>
     @if(!empty($seoData['keywords']))
@@ -93,7 +99,7 @@
         <script type="application/ld+json">{!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}</script>
     @endforeach
 </head>
-    <body class="gradient-bg">
+    <body class="gradient-bg bg-white text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100">
     <svg class="d-none">
         <symbol id="icon_nav" viewBox="0 0 25 18">
         <rect width="25" height="2" />
@@ -318,9 +324,428 @@
         </symbol>
     </svg>
     <style>
+        :root {
+        --theme-page-bg: rgb(255 255 255);
+        --theme-surface: rgba(255, 255, 255, .92);
+        --theme-surface-muted: rgba(248, 250, 252, .92);
+        --theme-surface-strong: rgba(241, 245, 249, .92);
+        --theme-border: rgba(148, 163, 184, .22);
+        --theme-text: rgb(15 23 42);
+        --theme-muted: rgb(100 116 139);
+        --theme-accent: rgb(194 65 12);
+        --theme-accent-soft: rgba(251, 146, 60, .14);
+        --theme-shadow: 0 12px 36px rgba(15, 23, 42, .08);
+        --theme-input-bg: rgb(255 255 255);
+        --theme-input-border: rgba(203, 213, 225, .75);
+        --theme-input-text: rgb(15 23 42);
+        --theme-input-placeholder: rgb(100 116 139);
+        --theme-label: rgb(15 23 42);
+        --theme-label-float: rgb(71 85 105);
+        }
+
+        .dark {
+        --theme-page-bg: rgb(2 6 23);
+        --theme-surface: rgba(15, 23, 42, .88);
+        --theme-surface-muted: rgba(15, 23, 42, .78);
+        --theme-surface-strong: rgba(30, 41, 59, .92);
+        --theme-border: rgba(148, 163, 184, .18);
+        --theme-text: rgb(248 250 252);
+        --theme-muted: rgb(148 163 184);
+        --theme-accent: rgb(251 146 60);
+        --theme-accent-soft: rgba(251, 146, 60, .18);
+        --theme-shadow: 0 18px 48px rgba(2, 6, 23, .32);
+        --theme-input-bg: rgb(15 23 42);
+        --theme-input-border: rgba(51, 65, 85, .95);
+        --theme-input-text: rgb(248 250 252);
+        --theme-input-placeholder: rgb(148 163 184);
+        --theme-label: rgb(226 232 240);
+        --theme-label-float: rgb(148 163 184);
+        }
+
+        body,
+        .bg-body,
+        .product-card,
+        .product-card_style3,
+        .category-banner__item,
+        .tab-content,
+        .products-carousel,
+        .shop-sidebar,
+        .shop-list,
+        .accordion-item,
+        .card,
+        .form-control,
+        .form-select,
+        .form-control_gray,
+        .btn,
+        .pp-section,
+        .pp-card,
+        .pp-data-card,
+        .pp-contact-card {
+        transition: background-color .25s ease, border-color .25s ease, color .25s ease, box-shadow .25s ease;
+        }
+
+        .theme-panel {
+        background: var(--theme-surface);
+        border: 1px solid var(--theme-border);
+        box-shadow: var(--theme-shadow);
+        color: var(--theme-text);
+        }
+
+        .theme-panel-muted {
+        background: var(--theme-surface-muted);
+        border: 1px solid var(--theme-border);
+        box-shadow: var(--theme-shadow);
+        color: var(--theme-text);
+        }
+
+        .theme-hero-surface {
+        background: linear-gradient(135deg, rgba(255, 247, 237, .98), rgba(255, 255, 255, .92));
+        color: var(--theme-text);
+        }
+
+        .dark .theme-hero-surface {
+        background: linear-gradient(135deg, rgba(30, 41, 59, .98), rgba(15, 23, 42, .92));
+        color: var(--theme-text);
+        }
+
+        .theme-media-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        }
+
+        .theme-carousel-image {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        }
+
+        .theme-card-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        }
+
+        .theme-input,
+        .theme-input.form-control,
+        .theme-input.form-select,
+        .theme-input.form-control_gray {
+        background: var(--theme-surface-muted);
+        border: 1px solid var(--theme-border);
+        color: var(--theme-text);
+        }
+
+        .theme-input::placeholder {
+        color: var(--theme-muted);
+        }
+
+        .theme-accent-text {
+        color: var(--theme-accent);
+        }
+
+        .form-floating > .form-control,
+        .form-floating > .form-select,
+        .theme-form-control,
+        .form-control_gray {
+        background: var(--theme-input-bg) !important;
+        border-color: var(--theme-input-border) !important;
+        color: var(--theme-input-text) !important;
+        }
+
+        .form-floating > label,
+        .theme-form-field > label,
+        .form-label-fixed > .form-label {
+        color: var(--theme-label) !important;
+        background: linear-gradient(180deg, transparent 0, transparent .92rem, var(--theme-input-bg) .92rem, var(--theme-input-bg) 100%) !important;
+        background-color: var(--theme-input-bg) !important;
+        padding: 0 .5rem !important;
+        z-index: 3;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label,
+        .form-floating > .form-select ~ label,
+        .form-floating > .form-control:-webkit-autofill ~ label,
+        .theme-form-field > .form-control:focus ~ label,
+        .theme-form-field > .form-control:not(:placeholder-shown) ~ label,
+        .theme-form-field > .form-select ~ label,
+        .form-label-fixed > .form-label {
+        color: var(--theme-label-float) !important;
+        background: linear-gradient(180deg, transparent 0, transparent .92rem, var(--theme-input-bg) .92rem, var(--theme-input-bg) 100%) !important;
+        background-color: var(--theme-input-bg) !important;
+        }
+
+        .form-floating > .form-control::placeholder,
+        .theme-form-control::placeholder {
+        color: transparent !important;
+        }
+
+        .form-floating > .form-control:-webkit-autofill,
+        .theme-form-control:-webkit-autofill {
+        -webkit-text-fill-color: var(--theme-input-text) !important;
+        -webkit-box-shadow: 0 0 0 1000px var(--theme-input-bg) inset !important;
+        box-shadow: 0 0 0 1000px var(--theme-input-bg) inset !important;
+        }
+
         #header {
         padding-top: 8px;
         padding-bottom: 8px;
+        }
+
+        .wishlist-icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 9999px;
+        border: 1px solid rgba(148, 163, 184, .18);
+        background: rgba(255, 255, 255, .92);
+        color: rgb(100 116 139);
+        transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .2s ease;
+        }
+
+        .wishlist-icon-btn:hover {
+        color: rgb(15 23 42);
+        border-color: rgba(15, 23, 42, .18);
+        transform: translateY(-1px);
+        }
+
+        .wishlist-icon-btn.is-active {
+        color: #f59e0b;
+        background: rgba(254, 243, 199, .92);
+        border-color: rgba(245, 158, 11, .35);
+        }
+
+        .wishlist-icon-btn svg {
+        display: block;
+        }
+
+        .dark .wishlist-icon-btn {
+        background: var(--theme-surface-strong) !important;
+        border-color: var(--theme-border) !important;
+        color: var(--theme-muted) !important;
+        }
+
+        .dark .wishlist-icon-btn:hover {
+        background: var(--theme-surface) !important;
+        color: var(--theme-text) !important;
+        border-color: var(--theme-border) !important;
+        }
+
+        .dark .wishlist-icon-btn.is-active {
+        color: #f59e0b !important;
+        background: rgba(245, 158, 11, .16) !important;
+        border-color: rgba(245, 158, 11, .35) !important;
+        }
+
+        .wishlist-text-link {
+        display: inline-flex;
+        align-items: center;
+        gap: .55rem;
+        color: inherit;
+        transition: color .2s ease;
+        }
+
+        .wishlist-text-link.is-active {
+        color: #f59e0b;
+        }
+
+        .wishlist-text-link svg {
+        flex: 0 0 auto;
+        }
+
+        .header-tools__item--wishlist svg,
+        .footer-mobile__link--wishlist svg {
+        transition: color .2s ease, transform .2s ease;
+        }
+
+        .header-tools__item--wishlist:hover svg,
+        .footer-mobile__link--wishlist:hover svg {
+        color: #f59e0b;
+        transform: scale(1.04);
+        }
+
+        .bg-body,
+        .anim_appear-bottom.bg-body,
+        .product-card,
+        .product-card_style3,
+        .category-banner__item,
+        .tab-content,
+        .products-carousel,
+        .swiper-slide.product-card {
+        background: var(--theme-surface) !important;
+        color: var(--theme-text) !important;
+        }
+
+        .product-card,
+        .product-card_style3,
+        .category-banner__item,
+        .tab-content,
+        .products-carousel {
+        border-color: var(--theme-border) !important;
+        box-shadow: var(--theme-shadow);
+        }
+
+        .pc__info,
+        .pc__title a,
+        .category-banner__item-content,
+        .section-title,
+        .breadcrumb .menu-link,
+        .shop-acs,
+        .accordion-button,
+        .reviews-note,
+        .product-single__name,
+        .product-single__reviews-title,
+        .customer-name h6,
+        .review-date,
+        .nav-tabs .nav-link,
+        .product-single__meta-info label,
+        .product-single__meta-info span,
+        .share-button__fallback,
+        .share-button__fallback .field__input {
+        color: var(--theme-text) !important;
+        }
+
+        .text-secondary,
+        .countdown-word,
+        .reviews-note.text-secondary,
+        .product-card__price .text-secondary,
+        .product-single__short-desc,
+        .review-text p,
+        .share-button__fallback .field__label,
+        .share-button__fallback .field__input::placeholder {
+        color: var(--theme-muted) !important;
+        }
+
+        .category-banner__item-mark {
+        background: #d6001c !important;
+        color: #ffffff !important;
+        }
+
+        .shop-sidebar .accordion-item,
+        .shop-list .accordion-item,
+        .shop-main .accordion-item {
+        background: transparent;
+        border-color: var(--theme-border);
+        }
+
+        .slide-split_text,
+        .slideshow-bg {
+        color: var(--theme-text);
+        }
+
+        .slideshow-text,
+        .slideshow-text p,
+        .slide-split_text p,
+        .slide-split_text h2 {
+        color: var(--theme-text) !important;
+        }
+
+        .shop-sidebar .menu-link,
+        .shop-list .menu-link,
+        .swatch-size.btn-outline-light,
+        .anim_appear-bottom .btn-link,
+        .anim_appear-bottom .btn-link_lg,
+        .anim_appear-bottom .pc__btn-wl {
+        color: var(--theme-text) !important;
+        }
+
+        .product-card__actions {
+        z-index: 4 !important;
+        gap: .35rem;
+        pointer-events: auto;
+        }
+
+        .product-card__actions form {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        }
+
+        .product-card__actions .btn-link,
+        .product-card__actions .pc__btn-wl {
+        position: relative;
+        z-index: 5;
+        }
+
+
+        .swatch-size.btn-outline-light {
+        border-color: var(--theme-border);
+        background: var(--theme-surface-muted);
+        }
+
+        .shop-asc__seprator {
+        background: var(--theme-border) !important;
+        }
+
+        .shop-sidebar {
+        background: linear-gradient(180deg, var(--theme-surface), var(--theme-surface-muted)) !important;
+        border-color: var(--theme-border) !important;
+        box-shadow: var(--theme-shadow);
+        }
+
+        .shop-sidebar .aside-header {
+        background: var(--theme-surface-strong) !important;
+        border-bottom: 1px solid var(--theme-border);
+        color: var(--theme-text) !important;
+        }
+
+        .shop-sidebar .accordion-item {
+        background: transparent !important;
+        border-bottom: 1px solid var(--theme-border);
+        }
+
+        .shop-sidebar .accordion-button,
+        .shop-sidebar .accordion-button.collapsed {
+        background: transparent !important;
+        color: var(--theme-text) !important;
+        }
+
+        .shop-sidebar .accordion-button__icon,
+        .shop-sidebar .btn-close-aside {
+        color: var(--theme-text) !important;
+        fill: currentColor;
+        opacity: .9;
+        }
+
+        .shop-sidebar .menu-link {
+        color: var(--theme-muted) !important;
+        transition: color .2s ease;
+        }
+
+        .shop-sidebar .menu-link:hover,
+        .shop-sidebar .menu-link.active,
+        .shop-sidebar .brand-list .menu-link:hover {
+        color: var(--theme-text) !important;
+        }
+
+        .shop-sidebar .brand-list .list-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        color: var(--theme-text);
+        }
+
+        .shop-sidebar .brand-list .text-right {
+        color: var(--theme-muted) !important;
+        }
+
+        .shop-sidebar .chk-brand {
+        accent-color: var(--theme-accent);
+        }
+
+        .shop-sidebar .swatch-size.btn-outline-light {
+        background: var(--theme-surface-strong) !important;
+        border-color: var(--theme-border) !important;
+        color: var(--theme-text) !important;
+        }
+
+        .shop-sidebar .swatch-size.swatch_active {
+        background: var(--theme-accent-soft) !important;
+        border-color: rgba(251, 146, 60, .35) !important;
+        color: var(--theme-text) !important;
         }
 
         .logo__image {
@@ -349,12 +774,194 @@
             background: #EFF4F8;
         }
 
+
+        .dark .form-check-input_fill,
+        .dark .form-check-input {
+        background-color: var(--theme-surface-strong);
+        border-color: var(--theme-border);
+        }
+
+        .dark .nav-tabs .nav-link.active,
+        .nav-tabs .nav-link.active {
+        color: var(--theme-text) !important;
+        border-color: transparent transparent var(--theme-accent) transparent;
+        }
+
+        .share-button__fallback {
+        background: var(--theme-surface);
+        border-color: var(--theme-border);
+        }
+
+        .share-button__fallback .field__input {
+        background: var(--theme-surface-muted);
+        border: 1px solid var(--theme-border);
+        }
+
+        .product-item .image {
+            background: var(--theme-surface-strong);
+        }
+
+        #box-content-search,
+        #box-content-search ul,
         #box-content-search li {
             list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
         #box-content-search .product-item {
             margin-bottom: 10px;
+        }
+
+        .search-empty-state {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: .95rem 1rem;
+            border-radius: .9rem;
+            background: var(--theme-surface-strong);
+            color: var(--theme-text);
+        }
+
+        .search-empty-state__meta {
+            color: var(--theme-muted);
+            font-size: .875rem;
+        }
+
+        .search-field,
+        .search-popup,
+        .search-popup .search-field,
+        .search-popup__results,
+        .search-result,
+        #box-content-search {
+        transition: background-color .25s ease, border-color .25s ease, color .25s ease, box-shadow .25s ease, transform .25s ease, opacity .25s ease;
+        }
+
+        .search-field {
+        position: relative;
+        }
+
+        .search-field .position-relative {
+        position: relative;
+        }
+
+        .search-field__input {
+        min-height: 3.35rem;
+        border: 1px solid var(--theme-border) !important;
+        border-radius: .875rem !important;
+        background: var(--theme-surface) !important;
+        color: var(--theme-text) !important;
+        padding: .9rem 3.5rem .9rem 1rem !important;
+        box-shadow: none !important;
+        }
+
+        .search-field__input::placeholder {
+        color: var(--theme-muted) !important;
+        opacity: 1;
+        }
+
+        .search-field__input:focus {
+        border-color: rgba(251, 146, 60, .38) !important;
+        box-shadow: 0 0 0 .18rem rgba(251, 146, 60, .10) !important;
+        transform: none;
+        }
+
+        .search-popup__submit,
+        .search-popup__reset,
+        .search-field__actor {
+        color: var(--theme-text) !important;
+        transition: color .18s ease, background-color .18s ease, border-color .18s ease;
+        }
+
+        .search-popup__submit:hover,
+        .search-popup__reset:hover,
+        .search-field__actor:hover {
+        color: var(--theme-accent) !important;
+        }
+
+        .search-field__actor {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 9999px;
+        background: transparent;
+        border: 1px solid var(--theme-border);
+        box-shadow: none;
+        }
+
+        .search-popup {
+        background: var(--theme-surface) !important;
+        border: 1px solid var(--theme-border);
+        border-radius: 1rem;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, .10);
+        padding: 1rem 0 0;
+        }
+
+        .dark .search-popup {
+        box-shadow: 0 18px 42px rgba(2, 6, 23, .42);
+        }
+
+        .search-popup .search-field.container {
+        max-width: 100%;
+        }
+
+        .search-popup__results,
+        .search-result,
+        #box-content-search,
+        .header-mobile .search-result {
+        background: transparent !important;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        }
+
+        .search-popup__results {
+        margin-top: .9rem;
+        padding: .9rem 1rem 1rem;
+        border-top: 1px solid var(--theme-border);
+        }
+
+        #box-content-search {
+        padding: 0;
+        }
+
+        #box-content-search .product-item,
+        .search-result .product-item {
+        align-items: center;
+        gap: .85rem;
+        padding: .75rem .2rem;
+        border-radius: 0;
+        border-bottom: 1px solid rgba(148, 163, 184, .12);
+        transition: border-color .18s ease, background-color .18s ease;
+        }
+
+        #box-content-search .product-item:last-child,
+        .search-result .product-item:last-child {
+        border-bottom: 0;
+        }
+
+        #box-content-search .product-item:hover,
+        .search-result .product-item:hover {
+        background: transparent;
+        border-color: rgba(251, 146, 60, .28);
+        transform: none;
+        }
+
+        #box-content-search .product-item .image,
+        .search-result .product-item .image {
+        background: var(--theme-surface-muted) !important;
+        border: 1px solid var(--theme-border);
+        border-radius: .7rem;
+        }
+
+        #box-content-search .product-item .name a,
+        #box-content-search .product-item .price,
+        .search-result .product-item .name a,
+        .search-result .product-item .price {
+        color: var(--theme-text) !important;
         }
     </style>
     <div class="header-mobile header_sticky">
@@ -372,21 +979,25 @@
             </a>
         </div> -->
 
-        <a href="#" class="header-tools__item header-tools__cart js-open-aside" data-aside="cartDrawer">
+        <a href="{{ route('cart.index') }}" class="header-tools__item header-tools__cart">
             <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <use href="#icon_cart" />
             </svg>
-            <span class="cart-amount d-block position-absolute js-cart-items-count">3</span>
+            @if(Cart::instance('cart')->content()->count() > 0)
+                <span class="cart-amount d-block position-absolute js-wishlist-count">
+                    {{ Cart::instance('cart')->content()->count() }}
+                </span>
+            @endif
         </a>
         </div>
 
         <nav
         class="header-mobile__navigation navigation d-flex flex-column w-100 position-absolute top-100 bg-body overflow-auto">
         <div class="container">
-            <form action="#" method="GET" class="search-field position-relative mt-4 mb-3">
+            <form action="{{ route('shop.index') }}" method="GET" class="search-field position-relative mt-4 mb-3">
             <div class="position-relative">
-                <input class="search-field__input w-100 border rounded-1" type="text" name="search-keyword"
-                placeholder="Search products" />
+                <input class="search-field__input w-100 border rounded-1" type="text" name="q"
+                placeholder="Search products" data-live-search-input />
                 <button class="btn-icon search-popup__submit pb-0 me-2" type="submit">
                 <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -397,7 +1008,7 @@
             </div>
 
             <div class="position-absolute start-0 top-100 m-0 w-100">
-                <div class="search-result"></div>
+                <ul class="search-result list-unstyled m-0" data-live-search-results></ul>
             </div>
             </form>
         </div>
@@ -525,11 +1136,11 @@
                 </div>
 
                 <div class="search-popup js-hidden-content">
-                <form class="search-field container">
+                <form action="{{ route('shop.index') }}" method="GET" class="search-field container">
                     <p class="text-uppercase text-secondary fw-medium mb-4">What are you looking for?</p>
                     <div class="position-relative">
                     <input class="search-field__input search-popup__input w-100 fw-medium" type="text" id="search-input"
-                        name="search-keyword" placeholder="Search products" autocomplete="search" />
+                        name="q" placeholder="Search products" autocomplete="off" data-live-search-input data-live-search-target="#box-content-search" />
                     <button class="btn-icon search-popup__submit" type="submit">
                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -540,18 +1151,18 @@
                     </div>
 
                     <div class="search-popup__results">
-                        <ul id="box-content-search">
+                        <ul id="box-content-search" class="list-unstyled m-0" data-live-search-results>
 
                         </ul>
 
-                    <div class="search-result row row-cols-5"></div>
+
                     </div>
                 </form>
                 </div>
             </div>
 
             @guest
-                <!-- Affichage si l'utilisateur n'est PAS connecté -->
+                <!-- Displayed when the user is not logged in -->
                 <div class="header-tools__item hover-container">
                     <a href="{{ route('login') }}" class="header-tools__item">
                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -561,9 +1172,8 @@
                     </a>
                 </div>
             @endguest
-
             @auth
-                <!-- Affichage si l'utilisateur EST connecté -->
+                <!-- Displayed when the user is logged in -->
                 <div class="header-tools__item hover-container">
                     <a href="{{ Auth::user()->utype === 'ADM' ? route('admin.index') : route('user.index') }}" class="header-tools__item">
                         <span class="pr-6px">{{ Auth::user()->name }}</span>
@@ -576,7 +1186,7 @@
             @endauth
 
 
-            <button type="button" class="theme-toggle header-tools__item" data-theme-toggle aria-label="Toggle color theme">
+            <button type="button" class="theme-toggle header-tools__item rounded-full border border-slate-200 bg-white/80 text-slate-900 shadow-sm backdrop-blur transition hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-100" data-theme-toggle aria-label="Toggle theme" aria-pressed="false">
                 <svg class="theme-toggle__icon-light" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 3V5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                     <path d="M12 18.5V21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -593,7 +1203,7 @@
                 </svg>
             </button>
 
-            <a href="{{route('wishlist.index')}}" class="header-tools__item header-tools__cart">
+            <a href="{{route('wishlist.index')}}" class="header-tools__item header-tools__cart header-tools__item--wishlist">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <use href="#icon_heart" />
                 </svg>
@@ -633,7 +1243,7 @@
                 <img src="{{ asset('assets/images/logo.png') }}" alt="SurfsideMedia" class="logo__image d-block" />
                 </a>
             </div> -->
-            <p class="footer-address">123 Avenue, Lomé-Kodjoviakopé, Togo</p>
+            <p class="footer-address">123 Avenue, Lom&eacute;-Kodjoviakop&eacute;, Togo</p>
             <p class="m-0"><strong class="fw-medium">yemmanuel.dzoke@gmail.com</strong></p>
             <p><strong class="fw-medium">(00228) 90 32 87 34</strong></p>
 
@@ -685,46 +1295,46 @@
             <div class="footer-column footer-menu mb-4 mb-lg-0">
             <h6 class="sub-menu__title text-uppercase">Company</h6>
             <ul class="sub-menu__list list-unstyled">
-                <li class="sub-menu__item"><a href="about-2.html" class="menu-link menu-link_us-s">About Us</a></li>
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Careers</a></li>
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Affiliates</a></li>
-                <li class="sub-menu__item"><a href="blog_list1.html" class="menu-link menu-link_us-s">Blog</a></li>
-                <li class="sub-menu__item"><a href="contact-2.html" class="menu-link menu-link_us-s">Contact Us</a></li>
+                <li class="sub-menu__item"><a href="{{ route('home.about') }}" class="menu-link menu-link_us-s">About Us</a></li>
+                <li class="sub-menu__item"><a href="{{ route('home.contacts') }}" class="menu-link menu-link_us-s">Contact Us</a></li>
+                <li class="sub-menu__item"><a href="{{ route('mentions.legales') }}" class="menu-link menu-link_us-s">Legal Notice</a></li>
+                <li class="sub-menu__item"><a href="{{ route('privacy.policy') }}" class="menu-link menu-link_us-s">Privacy Policy</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Shop All</a></li>
             </ul>
             </div>
 
             <div class="footer-column footer-menu mb-4 mb-lg-0">
             <h6 class="sub-menu__title text-uppercase">Shop</h6>
             <ul class="sub-menu__list list-unstyled">
-                <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">New Arrivals</a></li>
-                <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Accessories</a></li>
-                <li class="sub-menu__item"><a href="shop4.html" class="menu-link menu-link_us-s">Men</a></li>
-                <li class="sub-menu__item"><a href="shop5.html" class="menu-link menu-link_us-s">Women</a></li>
-                <li class="sub-menu__item"><a href="shop1.html" class="menu-link menu-link_us-s">Shop All</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">New Arrivals</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Accessories</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Men</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Women</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Shop All</a></li>
             </ul>
             </div>
 
             <div class="footer-column footer-menu mb-4 mb-lg-0">
             <h6 class="sub-menu__title text-uppercase">Help</h6>
             <ul class="sub-menu__list list-unstyled">
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Customer Service</a></li>
-                <li class="sub-menu__item"><a href="account_dashboard.html" class="menu-link menu-link_us-s">My Account</a>
+                <li class="sub-menu__item"><a href="{{ route('home.contacts') }}" class="menu-link menu-link_us-s">Customer Service</a></li>
+                <li class="sub-menu__item"><a href="{{ auth()->check() ? (auth()->user()->utype === 'ADM' ? route('admin.index') : route('user.index')) : route('login') }}" class="menu-link menu-link_us-s">My Account</a>
                 </li>
-                <li class="sub-menu__item"><a href="store_location.html" class="menu-link menu-link_us-s">Find a Store</a>
+                <li class="sub-menu__item"><a href="{{ route('home.contacts') }}" class="menu-link menu-link_us-s">Find a Store</a>
                 </li>
                 <li class="sub-menu__item"><a href="{{route('privacy.policy')}}" class="menu-link menu-link_us-s">Legal & Privacy</a></li>
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Gift Card</a></li>
+                <li class="sub-menu__item"><a href="{{ route('mentions.legales') }}" class="menu-link menu-link_us-s">Legal Notice</a></li>
             </ul>
             </div>
 
             <div class="footer-column footer-menu mb-4 mb-lg-0">
             <h6 class="sub-menu__title text-uppercase">Categories</h6>
             <ul class="sub-menu__list list-unstyled">
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shirts</a></li>
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Jeans</a></li>
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shoes</a></li>
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Bags</a></li>
-                <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shop All</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Shirts</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Jeans</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Shoes</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Bags</a></li>
+                <li class="sub-menu__item"><a href="{{ route('shop.index') }}" class="menu-link menu-link_us-s">Shop All</a></li>
             </ul>
             </div>
         </div>
@@ -732,10 +1342,9 @@
 
         <div class="footer-bottom">
         <div class="container d-md-flex align-items-center">
-            <span class="footer-copyright me-auto">©2024 ManuDibango</span>
+            <span class="footer-copyright me-auto">&copy;{{ now()->year }} Manu's Drop</span>
             <div class="footer-settings d-md-flex align-items-center">
-            <a href="{{route('privacy.policy')}}">Privacy Policy</a> &nbsp;|&nbsp; <a href="terms-conditions.html">Terms &amp;
-                Conditions</a>
+            <a href="{{route('privacy.policy')}}">Privacy Policy</a> &nbsp;|&nbsp; <a href="{{ route('mentions.legales') }}">Legal Notice</a>
             </div>
         </div>
         </div>
@@ -755,7 +1364,7 @@
         </div>
 
         <div class="col-4">
-            <a href="{{route('home.index')}}" class="footer-mobile__link d-flex flex-column align-items-center">
+            <a href="{{route('shop.index')}}" class="footer-mobile__link d-flex flex-column align-items-center">
             <svg class="d-block" width="18" height="18" viewBox="0 0 18 18" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <use href="#icon_hanger" />
@@ -765,19 +1374,59 @@
         </div>
 
         <div class="col-4">
-            <a href="{{route('home.index')}}" class="footer-mobile__link d-flex flex-column align-items-center">
+            <a href="{{route('wishlist.index')}}" class="footer-mobile__link footer-mobile__link--wishlist d-flex flex-column align-items-center">
             <div class="position-relative">
                 <svg class="d-block" width="18" height="18" viewBox="0 0 20 20" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <use href="#icon_heart" />
                 </svg>
-                <span class="wishlist-amount d-block position-absolute js-wishlist-count">3</span>
+                                @if(Cart::instance('wishlist')->content()->count() > 0)
+                    <span class="wishlist-amount d-block position-absolute js-wishlist-count">
+                        {{ Cart::instance('wishlist')->content()->count() }}
+                    </span>
+                @endif
             </div>
             <span>Wishlist</span>
             </a>
         </div>
         </div>
     </footer>
+
+
+    <div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title" id="quickViewModalLabel">Quick View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-5">
+                            <div class="quick-view__media rounded-4 overflow-hidden">
+                                <img src="" alt="" class="img-fluid w-100" data-quick-view-image>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h4 class="mb-3" data-quick-view-name></h4>
+                            <div class="fs-4 fw-semibold mb-4" data-quick-view-price></div>
+                            <div class="d-flex flex-wrap gap-3">
+                                <form method="POST" action="{{ route('cart.add') }}" class="d-inline-flex" data-quick-view-cart-form>
+                                    @csrf
+                                    <input type="hidden" name="id" value="">
+                                    <input type="hidden" name="name" value="">
+                                    <input type="hidden" name="price" value="">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-primary text-uppercase px-4">Add To Cart</button>
+                                </form>
+                                <a href="#" class="btn btn-outline-dark text-uppercase px-4" data-quick-view-link>View Product</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="scrollTop" class="visually-hidden end-0"></div>
     <div class="page-overlay"></div>
@@ -789,58 +1438,218 @@
     <script src="{{ asset('assets/js/plugins/countdown.js') }}"></script>
     
     <script>
-        $(document).ready(function() {
+    $(function () {
+        const minChars = 2;
+        const endpoint = "{{ route('home.search') }}";
+        const productUrlTemplate = "{{ route('shop.product.detail', ['product_slug' => '__SLUG__']) }}";
+        let activeRequest = null;
+        let debounceTimer = null;
 
-            // Bloquer la soumission du formulaire si on appuie sur Entrée
-            $("#search-input").on("keydown", function(e) {
-                if (e.keyCode === 13) {
-                    e.preventDefault(); // Empêche d'envoyer le formulaire
+        const escapeHtml = (value) => $('<div>').text(value ?? '').html();
+
+        const renderMessage = ($box, title, meta, stateClass = '') => {
+            $box.html(`
+                <li class="search-empty-state ${stateClass}">
+                    <div>
+                        <div class="body-title-2">${escapeHtml(title)}</div>
+                        ${meta ? `<div class="search-empty-state__meta">${escapeHtml(meta)}</div>` : ''}
+                    </div>
+                </li>
+            `);
+        };
+
+        const renderResults = ($box, items, query) => {
+            if (!Array.isArray(items) || items.length === 0) {
+                renderMessage($box, 'No products found', `No results for "${query}".`, 'search-empty-state--soft');
+                return;
+            }
+
+            const markup = items.map((item) => {
+                const price = item.sale_price || item.regular_price || '';
+                const image = item.image ? `/uploads/products/thumbnails/${item.image}` : '';
+                const link = productUrlTemplate.replace('__SLUG__', item.slug);
+                const badge = item.sale_price ? '<span class="search-hit__badge">Sale</span>' : '';
+
+                return `
+                    <li class="product-item gap14 mb-10 search-hit">
+                        <a href="${link}" class="search-hit__link d-flex align-items-center gap-3 w-100">
+                            <div class="image no-bg search-hit__media">
+                                ${image ? `<img src="${image}" alt="${escapeHtml(item.name)}" loading="lazy">` : ''}
+                            </div>
+                            <div class="search-hit__body flex-grow-1">
+                                <div class="search-hit__top d-flex align-items-center justify-content-between gap-2">
+                                    <span class="body-text search-hit__title">${escapeHtml(item.name)}</span>
+                                    ${badge}
+                                </div>
+                                <div class="search-empty-state__meta search-hit__price">${price ? `${escapeHtml(String(price))} FCFA` : ''}</div>
+                            </div>
+                        </a>
+                    </li>
+                `;
+            }).join('');
+
+            $box.html(markup);
+        };
+
+        const requestSearch = ($input) => {
+            const query = ($input.val() || '').trim();
+            const targetSelector = $input.data('live-search-target');
+            const $box = targetSelector ? $(targetSelector) : $input.closest('form').find('[data-live-search-results]').first();
+
+            if (!$box.length) {
+                return;
+            }
+
+            if (activeRequest) {
+                activeRequest.abort();
+                activeRequest = null;
+            }
+
+            if (!query.length) {
+                renderMessage($box, 'Search for a product', 'Enter a product name, reference, or keyword.', 'search-empty-state--soft');
+                return;
+            }
+
+            if (query.length < minChars) {
+                renderMessage($box, 'Keep typing', `Enter at least ${minChars} characters to search.`, 'search-empty-state--soft');
+                return;
+            }
+
+            renderMessage($box, 'Searching', 'Results are loading...','search-empty-state--loading');
+
+            activeRequest = $.ajax({
+                type: 'GET',
+                url: endpoint,
+                data: { query },
+                dataType: 'json'
+            }).done(function (data) {
+                renderResults($box, data, query);
+            }).fail(function (xhr, status) {
+                if (status === 'abort') {
+                    return;
                 }
+
+                renderMessage($box, 'Search unavailable', 'Unable to load results right now.');
+            }).always(function () {
+                activeRequest = null;
             });
+        };
 
-            // Faire la recherche Ajax normalement
-            $("#search-input").on("keyup", function() {
-                var searchQuery = $(this).val();
-                if (searchQuery.length > 2) {
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ route('home.search') }}",
-                        data: { query: searchQuery },
-                        dataType: "json",
-                        success: function(data) {
-                            $("#box-content-search").html(""); // Nettoie avant de rajouter
-
-                            $.each(data, function(index, item) {
-                                var url = "{{ route('shop.product.detail', ['product_slug' => 'slug_placeholder']) }}";
-                                var link = url.replace('slug_placeholder', item.slug); // ATTENTION c'est item.slug PAS limace
-
-                                $("#box-content-search").append(`
-                                    <ul>
-                                        <li class="product-item gap14 mb-10">
-                                            <div class="image no-bg">
-                                                <img src="/uploads/products/thumbnails/${item.image}" alt="${item.name}">
-                                            </div>
-                                            <div class="flex items-center justify-between gap20 flex-grow">
-                                                <div class="name">
-                                                    <a href="${link}" class="body-text">${item.name}</a>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                `);
-                            });
-                        }
-                    });
-                }
-            });
-
+        $(document).on('input focus', '[data-live-search-input]', function () {
+            const $input = $(this);
+            window.clearTimeout(debounceTimer);
+            debounceTimer = window.setTimeout(function () {
+                requestSearch($input);
+            }, 220);
         });
-    </script>
+
+        $(document).on('keydown', '[data-live-search-input]', function (event) {
+            if (event.key === 'Enter' && ($(this).val() || '').trim().length < minChars) {
+                event.preventDefault();
+            }
+        });
+
+        $(document).on('reset', 'form', function () {
+            const $form = $(this);
+            const $box = $form.find('[data-live-search-results]').first();
+
+            if ($box.length) {
+                window.setTimeout(function () {
+                    renderMessage($box, 'Search for a product', 'Enter a product name, reference, or keyword.', 'search-empty-state--soft');
+                }, 0);
+            }
+        });
+
+        $('[data-live-search-input]').each(function () {
+            const $input = $(this);
+            const targetSelector = $input.data('live-search-target');
+            const $box = targetSelector ? $(targetSelector) : $input.closest('form').find('[data-live-search-results]').first();
+
+            if ($box.length && !$box.children().length) {
+                renderMessage($box, 'Search for a product', 'Enter a product name, reference, or keyword.', 'search-empty-state--soft');
+            }
+        });
+    });
+</script>
 
     <script src="{{ asset('assets/js/theme.js') }}?v={{ filemtime(public_path('assets/js/theme.js')) }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const quickViewModal = document.getElementById('quickViewModal');
+            if (!quickViewModal) {
+                return;
+            }
+
+            const imageNode = quickViewModal.querySelector('[data-quick-view-image]');
+            const nameNode = quickViewModal.querySelector('[data-quick-view-name]');
+            const priceNode = quickViewModal.querySelector('[data-quick-view-price]');
+            const linkNode = quickViewModal.querySelector('[data-quick-view-link]');
+            const cartForm = quickViewModal.querySelector('[data-quick-view-cart-form]');
+            const cartId = cartForm?.querySelector('input[name="id"]');
+            const cartName = cartForm?.querySelector('input[name="name"]');
+            const cartPrice = cartForm?.querySelector('input[name="price"]');
+
+            const renderPrice = (trigger) => {
+                const sale = trigger.dataset.productSalePrice;
+                const regular = trigger.dataset.productRegularPrice;
+                const activePrice = trigger.dataset.productPrice;
+
+                if (sale) {
+                    return '<span class="text-body-tertiary text-decoration-line-through me-2">$' + regular + '</span><span>$' + sale + '</span>';
+                }
+
+                return '<span>$' + activePrice + '</span>';
+            };
+
+            quickViewModal.addEventListener('show.bs.modal', function (event) {
+                const trigger = event.relatedTarget;
+                if (!(trigger instanceof HTMLElement)) {
+                    return;
+                }
+
+                const productName = trigger.dataset.productName || '';
+                const productUrl = trigger.dataset.productUrl || '#';
+                const productImage = trigger.dataset.productImage || '';
+                const productPrice = trigger.dataset.productPrice || '';
+                const productId = trigger.closest('.product-card')?.querySelector('input[name="id"]')?.value || '';
+
+                if (imageNode) {
+                    imageNode.src = productImage;
+                    imageNode.alt = productName;
+                }
+
+                if (nameNode) {
+                    nameNode.textContent = productName;
+                }
+
+                if (priceNode) {
+                    priceNode.innerHTML = renderPrice(trigger);
+                }
+
+                if (linkNode) {
+                    linkNode.href = productUrl;
+                }
+
+                if (cartId) {
+                    cartId.value = productId;
+                }
+
+                if (cartName) {
+                    cartName.value = productName;
+                }
+
+                if (cartPrice) {
+                    cartPrice.value = productPrice;
+                }
+            });
+        });
+    </script>
     <script src="{{ asset('js/sweetalert.min.js') }}"></script> 
     
     @stack("scripts")
 </body>
 
 </html>
+
+
+

@@ -1,14 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-  .filled-heart{
-    color: orange;
-  }
-</style>
-<main class="pt-90">
+<main class="pt-90 text-slate-900 dark:text-slate-100">
     <div class="mb-md-1 pb-md-3"></div>
-    <section class="product-single container">
+    <section class="product-single container md:rounded-2xl md:border md:border-slate-200/70 bg-white/80 md:px-4 md:py-4 md:shadow-sm transition-colors dark:md:border-slate-800 dark:bg-slate-900/80">
       <div class="row">
         <div class="col-lg-7">
           <div class="product-single__media" data-media-type="vertical-thumbnail">
@@ -115,11 +110,11 @@
                 @if($product->sale_price)
                     <s>${{$product->regular_price}}</s> {{$product->sale_price}}
                 @else
-                    $($product->regular_price)
+                    ${{ $product->regular_price }}
                 @endif
             </span>
           </div>
-          <div class="product-single__short-desc">
+          <div class="product-single__short-desc text-slate-600 dark:text-slate-300">
             <p>{{$product->short_description}}</p>
           </div>
           @if(Cart::instance('cart')->content()->where('id',$product->id)->count()>0)
@@ -129,7 +124,7 @@
             @csrf
             <div class="product-single__addtocart">
               <div class="qty-control position-relative">
-                <input type="number" name="quantity" value="1" min="1" class="qty-control__number text-center">
+                <input type="number" name="quantity" value="1" min="1" class="qty-control__number rounded-md border border-slate-200 bg-white text-center text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
                 <div class="qty-control__reduce">-</div>
                 <div class="qty-control__increase">+</div>
               </div><!-- .qty-control -->
@@ -143,22 +138,22 @@
           @endif
           <div class="product-single__addtolinks">
             @if(Cart::instance('wishlist')->content()->where('id',$product->id)->count()>0)
-              <form method="POST" action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance('wishlist')->content()->where('id', $product->id)->first()->rowId]) }}" id="item-wishlist-form"> 
+              <form data-recaptcha-ignore="1" method="POST" action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance('wishlist')->content()->where('id', $product->id)->first()->rowId]) }}" id="item-wishlist-form"> 
                 @csrf
                 @method('DELETE') <!-- si vous utilisez une route DELETE -->   
-                <a href="javascript:void(0)" class="menu-link menu-link_us-s add-to-wishlist filled-heart" onclick="document.getElementById('item-wishlist-form').submit()"><svg width="16" height="16" viewBox="0 0 20 20"
+                <a href="javascript:void(0)" class="menu-link menu-link_us-s add-to-wishlist wishlist-text-link is-active" data-wishlist-link="1" onclick="document.getElementById('item-wishlist-form').submit()"><svg width="16" height="16" viewBox="0 0 20 20"
                     fill="none" xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_heart" /></svg><span>Remove to Wishlist</span>
                 </a>
               </form>
             @else
-              <form method="POST" action="{{route('wishlist.add')}}" id="wishlist-form">
+              <form data-recaptcha-ignore="1" method="POST" action="{{route('wishlist.add')}}" id="wishlist-form">
                 @csrf
                 <input type="hidden" name="id" value="{{$product->id}}">
                 <input type="hidden" name="name" value="{{$product->name}}">
                 <input type="hidden" name="price" value="{{$product->sale_price == '' ? $product->regular_price : $product->sale_price }}">
                 <input type="hidden" name="quantity" value="1">
-                <a href="javascript:void(0)" class="menu-link menu-link_us-s add-to-wishlist" onclick="document.getElementById('wishlist-form').submit()"><svg width="16" height="16" viewBox="0 0 20 20"
+                <a href="javascript:void(0)" class="menu-link menu-link_us-s add-to-wishlist wishlist-text-link" data-wishlist-link="1" onclick="document.getElementById('wishlist-form').submit()"><svg width="16" height="16" viewBox="0 0 20 20"
                   fill="none" xmlns="http://www.w3.org/2000/svg">
                   <use href="#icon_heart" />
                 </svg><span>Add to Wishlist</span></a>
@@ -175,7 +170,7 @@
               <details id="Details-share-template__main" class="m-1 xl:m-1.5" hidden="">
                 <summary class="btn-solid m-1 xl:m-1.5 pt-3.5 pb-3 px-5">+</summary>
                 <div id="Article-share-template__main"
-                  class="share-button__fallback flex items-center absolute top-full left-0 w-full px-2 py-4 bg-container shadow-theme border-t z-10">
+                  class="share-button__fallback flex items-center absolute top-full left-0 w-full px-2 py-4 bg-container shadow-theme border-t z-10 rounded-xl">
                   <div class="field grow mr-4">
                     <label class="field__label sr-only" for="url">Link</label>
                     <input type="text" class="field__input w-full" id="url"
@@ -197,7 +192,7 @@
             <script src="js/details-disclosure.html" defer="defer"></script>
             <script src="js/share.html" defer="defer"></script>
           </div>
-          <div class="product-single__meta-info">
+          <div class="product-single__meta-info rounded-xl border border-slate-200/70 bg-slate-50/80 p-4 transition-colors dark:border-slate-800 dark:bg-slate-950/70">
             <div class="meta-item">
               <label>SKU:</label>
               <span>{{$product->SKU}}</span>
@@ -229,7 +224,7 @@
               role="tab" aria-controls="tab-reviews" aria-selected="false">Reviews (2)</a>
           </li>
         </ul>
-        <div class="tab-content">
+        <div class="tab-content md:rounded-xl md:border md:border-slate-200/70 bg-white/80 md:p-4 transition-colors dark:md:border-slate-800 dark:bg-slate-950/80">
           <div class="tab-pane fade show active" id="tab-description" role="tabpanel"
             aria-labelledby="tab-description-tab">
             <div class="product-single__description">
@@ -263,7 +258,7 @@
           <div class="tab-pane fade" id="tab-reviews" role="tabpanel" aria-labelledby="tab-reviews-tab">
             <h2 class="product-single__reviews-title">Reviews</h2>
             <div class="product-single__reviews-list">
-              <div class="product-single__reviews-item">
+              <div class="product-single__reviews-item rounded-xl border border-slate-200/70 bg-slate-50/80 p-4 transition-colors dark:border-slate-800 dark:bg-slate-950/70">
                 <div class="customer-avatar">
                   <img loading="lazy" src="assets/images/avatar.jpg" alt="" />
                 </div>
@@ -295,7 +290,7 @@
                   </div>
                 </div>
               </div>
-              <div class="product-single__reviews-item">
+              <div class="product-single__reviews-item rounded-xl border border-slate-200/70 bg-slate-50/80 p-4 transition-colors dark:border-slate-800 dark:bg-slate-950/70">
                 <div class="customer-avatar">
                   <img loading="lazy" src="assets/images/avatar.jpg" alt="" />
                 </div>
@@ -328,7 +323,7 @@
                 </div>
               </div>
             </div>
-            <div class="product-single__review-form">
+            <div class="product-single__review-form rounded-xl border border-slate-200/70 bg-slate-50/80 p-4 transition-colors dark:border-slate-800 dark:bg-slate-950/70">
               <form name="customer-review-form">
                 <h5>Be the first to review “Message Cotton T-Shirt”</h5>
                 <p>Your email address will not be published. Required fields are marked *</p>
@@ -364,19 +359,19 @@
                   <input type="hidden" id="form-input-rating" value="" />
                 </div>
                 <div class="mb-4">
-                  <textarea id="form-input-review" class="form-control form-control_gray" placeholder="Your Review"
+                  <textarea id="form-input-review" class="form-control form-control_gray theme-input" placeholder="Your Review"
                     cols="30" rows="8"></textarea>
                 </div>
                 <div class="form-label-fixed mb-4">
                   <label for="form-input-name" class="form-label">Name *</label>
-                  <input id="form-input-name" class="form-control form-control-md form-control_gray">
+                  <input id="form-input-name" class="form-control form-control-md form-control_gray theme-input">
                 </div>
                 <div class="form-label-fixed mb-4">
                   <label for="form-input-email" class="form-label">Email address *</label>
-                  <input id="form-input-email" class="form-control form-control-md form-control_gray">
+                  <input id="form-input-email" class="form-control form-control-md form-control_gray theme-input">
                 </div>
                 <div class="form-check mb-4">
-                  <input class="form-check-input form-check-input_fill" type="checkbox" value="" id="remember_checkbox">
+                  <input class="form-check-input form-check-input_fill theme-input" type="checkbox" value="" id="remember_checkbox">
                   <label class="form-check-label" for="remember_checkbox">
                     Save my name, email, and website in this browser for the next time I comment.
                   </label>
@@ -390,7 +385,7 @@
         </div>
       </div>
     </section>
-    <section class="products-carousel container">
+    <section class="products-carousel container md:rounded-2xl md:border md:border-slate-200/70 bg-white/80 md:px-4 md:py-4 md:shadow-sm transition-colors dark:md:border-slate-800 dark:bg-slate-900/80">
       <h2 class="h3 text-uppercase mb-4 pb-xl-2 mb-xl-4">Related <strong>Products</strong></h2>
 
       <div id="related_products" class="position-relative">
@@ -460,23 +455,40 @@
 
               <div class="pc__info position-relative">
                 <p class="pc__category">{{$product->category->name}}</p>
-                <h6 class="pc__title"><a href="{{route('shop.product.detail', ['product_slug' => $product->slug])}}">Kirby T-Shirt</a>{{$product->name}}</h6>
+                <h6 class="pc__title"><a href="{{route('shop.product.detail', ['product_slug' => $product->slug])}}">{{$product->name}}</a></h6>
                 <div class="product-card__price d-flex">
                   <span class="money price">
                     @if($product->sale_price)
                         <s>${{$product->regular_price}}</s> {{$product->sale_price}}
                     @else
-                        $($product->regular_price)
+                        ${{ $product->regular_price }}
                     @endif
                   </span>
                 </div>
 
-                <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                  title="Add To Wishlist">
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <use href="#icon_heart" />
-                  </svg>
-                </button>
+                @if(Cart::instance('wishlist')->content()->where('id',$product->id)->count()>0)
+                <form data-recaptcha-ignore="1" method="POST" action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance('wishlist')->content()->where('id', $product->id)->first()->rowId]) }}">
+                  @csrf
+                  @method('DELETE')
+                  <button class="pc__btn-wl wishlist-icon-btn is-active position-absolute top-0 end-0 border-0 js-add-wishlist"
+                    title="Remove To Wishlist">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <use href="#icon_heart" />
+                    </svg>
+                  </button>
+                </form>
+                @else
+                <form data-recaptcha-ignore="1" method="POST" action="{{route('wishlist.add')}}">
+                  @csrf
+                  <input type="hidden" name="id" value="{{$product->id}}">
+                  <button class="pc__btn-wl wishlist-icon-btn position-absolute top-0 end-0 border-0 js-add-wishlist"
+                    title="Add To Wishlist">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <use href="#icon_heart" />
+                    </svg>
+                  </button>
+                </form>
+                @endif
               </div>
             </div>
             @endforeach

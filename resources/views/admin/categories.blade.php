@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="main-content-inner">
-        <div class="main-content-wrap">
+    <div class="main-content-inner text-slate-900 dark:text-slate-100">
+        <div class="main-content-wrap text-slate-900 dark:text-slate-100">
 
             <!-- Header & Breadcrumbs -->
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
@@ -21,12 +21,12 @@
             </div>
 
             <!-- Main Box -->
-            <div class="wg-box">
+            <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card">
 
                 <!-- Filter + Add Button -->
                 <div class="flex items-center justify-between gap10 flex-wrap">
                     <div class="wg-filter flex-grow">
-                        <form class="form-search" method="GET" action="">
+                        <form class="form-search admin-shell-search" method="GET" action="">
                             <fieldset class="name">
                                 <input type="text" name="name" placeholder="Search here..." value="{{ request('name') }}" required>
                             </fieldset>
@@ -47,8 +47,8 @@
 
                 <!-- Table -->
                 <div class="wg-table table-all-user mt-4">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
+                    <div class="table-responsive admin-shell-table">
+                        <table class="table table-striped table-bordered overflow-hidden rounded-xl">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -86,7 +86,7 @@
                                                 <form action="{{ route('admin.category.delete', $category->id) }}" method="POST" class="d-inline-block delete-form">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="item text-danger delete" style="border: none; background: none;">
+                                                    <button type="submit" class="item text-danger delete admin-shell-danger-action">
                                                         <i class="icon-trash-2"></i>
                                                     </button>
                                                 </form>

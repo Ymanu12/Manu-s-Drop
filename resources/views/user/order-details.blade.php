@@ -30,44 +30,45 @@
       flex-direction: column;
       gap: 24px;
       border-radius: 12px;
-      background: var(--White);
+      background: var(--theme-surface);
       box-shadow: 0px 4px 24px 2px rgba(20, 25, 38, 0.05);
     }
 
     .bg-success {
-      background-color: #40c710 !important;
+      background-color: rgba(34, 197, 94, .18) !important; color: rgb(21, 128, 61) !important; border: 1px solid rgba(34, 197, 94, .28);
     }
 
     .bg-danger {
-      background-color: #f44032 !important;
+      background-color: rgba(239, 68, 68, .16) !important; color: rgb(185, 28, 28) !important; border: 1px solid rgba(239, 68, 68, .28);
     }
 
     .bg-warning {
-      background-color: #f5d700 !important;
-      color: #000;
+      background-color: rgba(245, 158, 11, .18) !important;
+      color: rgb(146, 64, 14) !important;
+      border: 1px solid rgba(245, 158, 11, .28);
     }
 
     .table-transaction>tbody>tr:nth-of-type(odd) {
-      --bs-table-accent-bg: #fff !important;
+      --bs-table-accent-bg: var(--theme-surface) !important;
 
     }
 
     .table-transaction th,
     .table-transaction td {
       padding: 0.625rem 1.5rem .25rem !important;
-      color: #000 !important;
+      color: var(--theme-text) !important;
     }
 
     .table> :not(caption)>tr>th {
       padding: 0.625rem 1.5rem .25rem !important;
-      background-color: #6a6e51 !important;
+      background-color: var(--theme-surface-strong) !important;
     }
 
     .table-bordered>:not(caption)>*>* {
       border-width: inherit;
       line-height: 32px;
       font-size: 14px;
-      border: 1px solid #e1e1e1;
+      border: 1px solid var(--theme-border);
       vertical-align: middle;
     }
 
@@ -95,12 +96,41 @@
     .table-bordered> :not(caption)>tr>th,
     .table-bordered> :not(caption)>tr>td {
       border-width: 1px 1px;
-      border-color: #6a6e51;
+      border-color: var(--theme-border);
+    }
+
+    .dark .bg-success {
+      color: rgb(134, 239, 172) !important;
+    }
+
+    .dark .bg-danger {
+      color: rgb(252, 165, 165) !important;
+    }
+
+    .dark .bg-warning {
+      color: rgb(253, 230, 138) !important;
+    }
+
+    .table thead th,
+    .table tbody td,
+    .table tbody td a,
+    .wg-box h5,
+    .wg-box .body-title-2 {
+      color: var(--theme-text) !important;
+    }
+
+    .table tbody tr {
+      background: var(--theme-surface);
+    }
+
+    .dark .table-striped > tbody > tr:nth-of-type(odd),
+    .dark .table-striped > tbody > tr:nth-of-type(even) {
+      color: var(--theme-text);
     }
   </style>
-<main class="pt-90" style="padding-top: 0px;">
+<main class="pt-90 text-slate-900 dark:text-slate-100" style="padding-top: 0px;">
     <div class="mb-4 pb-4"></div>
-    <section class="my-account container">
+    <section class="my-account container md:rounded-2xl md:border md:border-slate-200/70 bg-white/80 md:px-4 md:py-4 md:shadow-sm transition-colors dark:md:border-slate-800 dark:bg-slate-900/80">
         <h2 class="page-title">Orders</h2>
         <div class="row">
             <div class="col-lg-2">
@@ -108,7 +138,7 @@
             </div>
 
             <div class="col-lg-10">
-            <div class="wg-box">
+            <div class="wg-box rounded-xl border border-slate-200/70 bg-slate-50/80 p-5 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-950/70">
                     <div class="flex items-center justify-between gap10 flex-wrap">
                         
                         <div class="row">
@@ -122,8 +152,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
+                    <div class="table-responsive md:rounded-xl md:border md:border-slate-200/70 bg-white/70 md:shadow-sm dark:md:border-slate-800 dark:bg-slate-950/60">
+                        <table class="table table-striped table-bordered overflow-hidden rounded-xl">
                             <thead>
                                 <tr>
                                     <th>Order no</th>
@@ -158,14 +188,14 @@
                     </div>
                 </div><br><br>
 
-                <div class="wg-box">
+                <div class="wg-box rounded-xl border border-slate-200/70 bg-slate-50/80 p-5 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-950/70">
                     <div class="flex items-center justify-between gap10 flex-wrap">
                         <div class="wg-filter flex-grow">
                             <h5>Ordered Items</h5>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
+                    <div class="table-responsive md:rounded-xl md:border md:border-slate-200/70 bg-white/70 md:shadow-sm dark:md:border-slate-800 dark:bg-slate-950/60">
+                        <table class="table table-striped table-bordered overflow-hidden rounded-xl">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -231,7 +261,7 @@
                 <div class="wg-box mt-5">
                     <h5>Shipping Address</h5>
                     <div class="my-account__address-item col-md-6">
-                        <div class="my-account__address-item__detail">
+                        <div class="my-account__address-item__detail text-slate-700 dark:text-slate-300">
                             <p>{{ $order->name }}</p>
                             <p>{{ $order->address }}</p>
                             <p>{{ $order->locality }}, DEF</p>

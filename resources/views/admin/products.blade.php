@@ -1,8 +1,8 @@
 @extends('layouts.admin') 
 
 @section('content')
-    <div class="main-content-inner">
-        <div class="main-content-wrap">
+    <div class="main-content-inner text-slate-900 dark:text-slate-100">
+        <div class="main-content-wrap text-slate-900 dark:text-slate-100">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
                 <h3>All Products</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
@@ -25,12 +25,12 @@
                 <p class="alert alert-success mt-3">{{ Session::get('status') }}</p>
             @endif
 
-            <div class="wg-box">
+            <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card">
                 <div class="flex items-center justify-between gap10 flex-wrap">
                     <div class="wg-filter flex-grow">
-                        <form class="form-search">
+                        <form class="form-search admin-shell-search">
                             <fieldset class="name">
-                                <input type="text" placeholder="Search here..." class="" name="name"
+                                <input type="text" placeholder="Search here..." class="admin-shell-input px-3 py-2" name="name"
                                     tabindex="2" value="" aria-required="true" required="">
                             </fieldset>
                             <div class="button-submit">
@@ -41,8 +41,8 @@
                     <a class="tf-button style-1 w208" href="{{route('admin.product.add')}}"><i
                             class="icon-plus"></i>Add new</a>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                <div class="table-responsive admin-shell-table">
+                    <table class="table table-striped table-bordered overflow-hidden rounded-xl">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -94,7 +94,7 @@
                                         <form action="{{route('admin.product.delete', $product->id)}}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <div class="item text-danger delete">
+                                            <div class="item text-danger delete admin-shell-danger-action">
                                                 <i class="icon-trash-2"></i>
                                             </div>
                                         </form>

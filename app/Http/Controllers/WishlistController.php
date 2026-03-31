@@ -31,20 +31,58 @@ class WishlistController extends Controller
         });
 
         if (!$existingItem) {
-            Cart::instance('wishlist')->add(
+            $existingItem = Cart::instance('wishlist')->add(
                 $product->id,
                 $product->name,
                 1,
                 (float) ($product->sale_price ?: $product->regular_price)
-            )->associate(Product::class);
+            );
+
+            $existingItem->associate(Product::class);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Product added to wishlist.',
+                'wishlist_count' => Cart::instance('wishlist')->content()->count(),
+                'product_id' => (int) $product->id,
+                'row_id' => $existingItem->rowId,
+                'remove_url' => route('wishlist.item.remove', ['rowId' => $existingItem->rowId]),
+            ]);
         }
 
         return back()->with('success', 'Product added to wishlist.');
     }
 
-    public function remove_item($rowId)
+    public function remove_item(Request $request, $rowId)
     {
+        $item = Cart::instance('wishlist')->get($rowId);
+
+        if (!$item) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found in wishlist.',
+                ], 404);
+            }
+
+            return back()->with('error', 'Product not found in wishlist.');
+        }
+
+        $productId = (int) $item->id;
         Cart::instance('wishlist')->remove($rowId);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Item removed from wishlist',
+                'wishlist_count' => Cart::instance('wishlist')->content()->count(),
+                'product_id' => $productId,
+                'add_url' => route('wishlist.add'),
+            ]);
+        }
+
         return back()->with('success', 'Item removed from wishlist');
     }
 

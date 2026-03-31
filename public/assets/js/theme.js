@@ -345,6 +345,11 @@ function pureFadeOut(e) {
         const _this = this;
         this.$asideActivators.forEach(function($activator) {
           $activator.addEventListener('click', (event) => {
+            const isSubmitActivator = $activator.tagName === 'BUTTON' && ($activator.getAttribute('type') || 'submit').toLowerCase() === 'submit' && $activator.closest('form');
+            if (isSubmitActivator) {
+              return;
+            }
+
             event.preventDefault();
             const targetElId = event.currentTarget.dataset.aside;
             const $targetAside = document.getElementById(targetElId);
@@ -1338,7 +1343,6 @@ function pureFadeOut(e) {
   $('.checkout-form .btn-checkout').off('click').on('click', function() {
     window.location.href='./shop_order_complete.html';
   });
-
   var showRegisterTrigger = document.querySelector('.js-show-register');
   if (showRegisterTrigger) {
     showRegisterTrigger.addEventListener('click', function(e) {
@@ -1349,12 +1353,16 @@ function pureFadeOut(e) {
     });
   }
 
-  $('button.js-add-wishlist, a.add-to-wishlist').off('click').on('click', function() {
+  $('button.js-add-wishlist, a.add-to-wishlist').off('click').on('click', function(event) {
+    if (this.closest('form[data-wishlist-toggle="1"]')) {
+      return;
+    }
+
     if($(this).hasClass("active"))
       $(this).removeClass("active");
     else
       $(this).addClass("active");
-    return false;
+    event.preventDefault();
   });
 
   if($('[data-fancybox="gallery"]').length > 0) {

@@ -1,88 +1,67 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="main-content-inner">
-    <div class="main-content-wrap">
-        <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-            <h3>Coupon Information</h3>
-            <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
-                <li>
-                    <a href="{{route('admin.index')}}">
-                        <div class="text-tiny">Dashboard</div>
-                    </a>
-                </li>
-                <li>
-                    <i class="icon-chevron-right"></i>
-                </li>
-                <li>
-                    <a href="{{route('admin.coupons')}}">
-                        <div class="text-tiny">Coupons</div>
-                    </a>
-                </li>
-                <li>
-                    <i class="icon-chevron-right"></i>
-                </li>
-                <li>
-                    <div class="text-tiny">New Coupon</div>
-                </li>
+<div class="main-content-inner text-slate-900 dark:text-slate-100">
+    <div class="main-content-wrap text-slate-900 dark:text-slate-100">
+        <div class="admin-page-header">
+            <div>
+                <div class="admin-page-header__eyebrow">Promotions</div>
+                <h2 class="admin-page-header__title">Edit coupon</h2>
+                <p class="admin-page-header__meta">Adjust the discount logic while keeping the offer rules easy to audit and maintain.</p>
+            </div>
+            <ul class="admin-breadcrumbs">
+                <li><a href="{{ route('admin.index') }}">Dashboard</a></li>
+                <li><a href="{{ route('admin.coupons') }}">Coupons</a></li>
+                <li>Edit</li>
             </ul>
         </div>
-        <div class="wg-box">
-            
-            <form class="form-new-product form-style-1" method="POST" action="{{ route('admin.coupon.update', $coupon->id) }}">
-                @csrf
-                @method('PUT')
-                <fieldset class="name">
-                    <div class="body-title">Coupon Code <span class="tf-color-1">*</span></div>
-                    <input class="flex-grow" type="text" placeholder="Coupon Code" name="code"
-                        tabindex="0" value="{{ old('code', $coupon->code) }}" aria-required="true" required="">
-                </fieldset>
-                @error('code')
-                    <span class="alert alert-danger d-block mt-2 text-center">{{ $message }}</span>
-                @enderror
-                <fieldset class="category">
-                    <div class="body-title">Coupon Type</div>
-                    <div class="select flex-grow">
-                        <select class="" name="type">
+
+        <form method="POST" action="{{ route('admin.coupon.update', $coupon->id) }}" class="form-new-product form-style-1 admin-form-grid">
+            @csrf
+            @method('PUT')
+
+            <section class="admin-form-panel admin-form-stack">
+                <div class="admin-form-panel__header">
+                    <div>
+                        <div class="admin-form-panel__title">Coupon information</div>
+                        <p class="admin-form-panel__meta">Update the code and discount type for this campaign without losing checkout clarity.</p>
+                    </div>
+                    <span class="admin-form-badge">Promotion rule</span>
+                </div>
+
+                <x-input-field name="code" label="Coupon code" :required="true" :value="$coupon->code" wrapperClass="form-floating theme-form-field" />
+                <x-input-field name="value" label="Value" :required="true" :value="$coupon->value" wrapperClass="form-floating theme-form-field" />
+
+                <fieldset class="theme-form-field category">
+                    <div class="body-title">Coupon type</div>
+                    <div class="select flex-grow admin-shell-select">
+                        <select name="type">
                             <option value="">Select</option>
-                            <option value="fixed" {{ $coupon->type == 'fixed' ? 'selected' : '' }}>Fixed</option>
-                            <option value="percent" {{ $coupon->type == 'percent' ? 'selected' : '' }}>Percent</option>
+                            <option value="fixed" {{ old('type', $coupon->type) == 'fixed' ? 'selected' : '' }}>Fixed amount</option>
+                            <option value="percent" {{ old('type', $coupon->type) == 'percent' ? 'selected' : '' }}>Percentage</option>
                         </select>
                     </div>
                 </fieldset>
-                <fieldset class="name">
-                    <div class="body-title">Value <span class="tf-color-1">*</span></div>
-                    <input class="flex-grow" type="text" placeholder="Coupon Value" name="value"
-                        tabindex="0" value="{{ old('value', $coupon->value) }}" aria-required="true" required="">
-                </fieldset>
-                @error('value')
-                    <span class="alert alert-danger d-block mt-2 text-center">{{ $message }}</span>
-                @enderror
-                <fieldset class="name">
-                    <div class="body-title">Cart Value <span class="tf-color-1">*</span></div>
-                    <input class="flex-grow" type="text" placeholder="Cart Value"
-                        name="cart_value" tabindex="0" value="{{ old('cart_value', $coupon->cart_value) }}" aria-required="true"
-                        required="">
-                </fieldset>
-                @error('cart_value')
-                    <span class="alert alert-danger d-block mt-2 text-center">{{ $message }}</span>
-                @enderror
-                <fieldset class="name">
-                    <div class="body-title">Expiry Date <span class="tf-color-1">*</span></div>
-                    <input class="flex-grow" type="date" placeholder="Expiry Date"
-                        name="expiry_date" tabindex="0" value="{{ old('expiry_date', $coupon->expiry_date) }}" aria-required="true"
-                        required="">
-                </fieldset>
-                @error('expiry_date')
-                    <span class="alert alert-danger d-block mt-2 text-center">{{ $message }}</span>
-                @enderror
-                <div class="bot">
-                    <div></div>
-                    <button class="tf-button w208" type="submit">Save</button>
+            </section>
+
+            <section class="admin-form-panel admin-form-stack">
+                <div class="admin-form-panel__header">
+                    <div>
+                        <div class="admin-form-panel__title">Redemption rules</div>
+                        <p class="admin-form-panel__meta">Maintain clear eligibility and expiration conditions for the checkout team and customers.</p>
+                    </div>
+                    <span class="admin-form-badge">Checkout</span>
                 </div>
-            </form>
-        </div>
+
+                <x-input-field name="cart_value" label="Cart value" :required="true" :value="$coupon->cart_value" wrapperClass="form-floating theme-form-field" />
+                <x-input-field name="expiry_date" type="date" label="Expiry date" :required="true" :value="\Carbon\Carbon::parse($coupon->expiry_date)->format('Y-m-d')" wrapperClass="form-floating theme-form-field" />
+
+                <div class="admin-form-actions admin-form-actions--split">
+                    <div class="admin-form-note">Updating a live coupon changes checkout behavior immediately.</div>
+                    <button class="tf-button" type="submit">Update coupon</button>
+                </div>
+            </section>
+        </form>
     </div>
 </div>
 @endsection
-

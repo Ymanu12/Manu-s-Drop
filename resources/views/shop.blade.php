@@ -1,14 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-  .filled-heart{
-    color: orange;
-  }
-</style>
-<main class="pt-90">
+<main class="pt-90 text-slate-900 dark:text-slate-100">
     <section class="shop-main container d-flex pt-4 pt-xl-5">
-      <div class="shop-sidebar side-sticky bg-body" id="shopFilter">
+      <div class="shop-sidebar side-sticky bg-body md:rounded-xl md:border md:border-slate-200/70 bg-white/90 md:p-4 md:shadow-sm transition-colors dark:md:border-slate-800 dark:bg-slate-900/90" id="shopFilter">
         <div class="aside-header d-flex d-lg-none align-items-center">
           <h3 class="text-uppercase fs-6 mb-0">Filter By</h3>
           <button class="btn-close-lg js-close-aside btn-close-aside ms-auto"></button>
@@ -67,16 +62,16 @@
               aria-labelledby="accordion-heading-1" data-bs-parent="#color-filters">
               <div class="accordion-body px-0 pb-0">
                 <div class="d-flex flex-wrap">
-                  <a href="#" class="swatch-color js-filter" style="color: #0a2472"></a>
-                  <a href="#" class="swatch-color js-filter" style="color: #d7bb4f"></a>
-                  <a href="#" class="swatch-color js-filter" style="color: #282828"></a>
-                  <a href="#" class="swatch-color js-filter" style="color: #b1d6e8"></a>
-                  <a href="#" class="swatch-color js-filter" style="color: #9c7539"></a>
-                  <a href="#" class="swatch-color js-filter" style="color: #d29b48"></a>
-                  <a href="#" class="swatch-color js-filter" style="color: #e6ae95"></a>
-                  <a href="#" class="swatch-color js-filter" style="color: #d76b67"></a>
-                  <a href="#" class="swatch-color swatch_active js-filter" style="color: #bababa"></a>
-                  <a href="#" class="swatch-color js-filter" style="color: #bfdcc4"></a>
+                  <a href="#" class="swatch-color js-filter" style="--swatch-color: #0a2472; color: #0a2472"></a>
+                  <a href="#" class="swatch-color js-filter" style="--swatch-color: #d7bb4f; color: #d7bb4f"></a>
+                  <a href="#" class="swatch-color js-filter" style="--swatch-color: #282828; color: #282828"></a>
+                  <a href="#" class="swatch-color js-filter" style="--swatch-color: #b1d6e8; color: #b1d6e8"></a>
+                  <a href="#" class="swatch-color js-filter" style="--swatch-color: #9c7539; color: #9c7539"></a>
+                  <a href="#" class="swatch-color js-filter" style="--swatch-color: #d29b48; color: #d29b48"></a>
+                  <a href="#" class="swatch-color js-filter" style="--swatch-color: #e6ae95; color: #e6ae95"></a>
+                  <a href="#" class="swatch-color js-filter" style="--swatch-color: #d76b67; color: #d76b67"></a>
+                  <a href="#" class="swatch-color swatch_active js-filter" style="--swatch-color: #bababa; color: #bababa"></a>
+                  <a href="#" class="swatch-color js-filter" style="--swatch-color: #bfdcc4; color: #bfdcc4"></a>
                 </div>
               </div>
             </div>
@@ -150,7 +145,7 @@
 
       </div>
 
-      <div class="shop-list flex-grow-1">
+      <div class="shop-list flex-grow-1 md:rounded-xl md:border md:border-slate-200/60 bg-white/70 md:p-4 md:shadow-sm transition-colors dark:md:border-slate-800 dark:bg-slate-900/60">
         <div class="swiper-container js-swiper-slider slideshow slideshow_small slideshow_split" data-settings='{
             "autoplay": {
               "delay": 5000
@@ -166,19 +161,18 @@
           }'>
           <div class="swiper-wrapper">
             <div class="swiper-slide">
-              <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-                <div class="slide-split_text position-relative d-flex align-items-center"
-                  style="background-color: #f5e6e0;">
+              <div class="slide-split h-100 d-block d-md-flex overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm dark:border-slate-800">
+                <div class="slide-split_text position-relative d-flex align-items-center theme-hero-surface">
                   <div class="slideshow-text container p-3 p-xl-5">
                     <h2
                       class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
                       Women's <br /><strong>ACCESSORIES</strong></h2>
                     <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are the best way to
-                      update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</h6>
+                      update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</p>
                   </div>
                 </div>
                 <div class="slide-split_media position-relative">
-                  <div class="slideshow-bg" style="background-color: #f5e6e0;">
+                  <div class="slideshow-bg theme-hero-surface">
                     <img loading="lazy" src="{{asset('assets/images/shop/shop_banner3.jpg')}}" width="630" height="450"
                       alt="Women's accessories" class="slideshow-bg__img object-fit-cover" />
                   </div>
@@ -187,19 +181,18 @@
             </div>
 
             <div class="swiper-slide">
-              <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-                <div class="slide-split_text position-relative d-flex align-items-center"
-                  style="background-color: #f5e6e0;">
+              <div class="slide-split h-100 d-block d-md-flex overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm dark:border-slate-800">
+                <div class="slide-split_text position-relative d-flex align-items-center theme-hero-surface">
                   <div class="slideshow-text container p-3 p-xl-5">
                     <h2
                       class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
                       Women's <br /><strong>ACCESSORIES</strong></h2>
                     <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are the best way to
-                      update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</h6>
+                      update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</p>
                   </div>
                 </div>
                 <div class="slide-split_media position-relative">
-                  <div class="slideshow-bg" style="background-color: #f5e6e0;">
+                  <div class="slideshow-bg theme-hero-surface">
                     <img loading="lazy" src="{{asset('assets/images/shop/shop_banner3.jpg')}}" width="630" height="450"
                       alt="Women's accessories" class="slideshow-bg__img object-fit-cover" />
                   </div>
@@ -208,19 +201,18 @@
             </div>
 
             <div class="swiper-slide">
-              <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-                <div class="slide-split_text position-relative d-flex align-items-center"
-                  style="background-color: #f5e6e0;">
+              <div class="slide-split h-100 d-block d-md-flex overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm dark:border-slate-800">
+                <div class="slide-split_text position-relative d-flex align-items-center theme-hero-surface">
                   <div class="slideshow-text container p-3 p-xl-5">
                     <h2
                       class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
                       Women's <br /><strong>ACCESSORIES</strong></h2>
                     <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are the best way to
-                      update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</h6>
+                      update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</p>
                   </div>
                 </div>
                 <div class="slide-split_media position-relative">
-                  <div class="slideshow-bg" style="background-color: #f5e6e0;">
+                  <div class="slideshow-bg theme-hero-surface">
                     <img loading="lazy" src="{{asset('assets/images/shop/shop_banner3.jpg')}}" width="630" height="450"
                       alt="Women's accessories" class="slideshow-bg__img object-fit-cover" />
                   </div>
@@ -245,16 +237,16 @@
           </div>
 
           <div class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-              <form id="frmfilter" method="GET" action="{{ route('shop.index') }}">
+              <form id="shopToolbarForm" method="GET" action="{{ route('shop.index') }}">
                   <div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
-                      <select class="hop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0" id="pagesize" name="size">
+                      <select class="hop-acs__select form-select w-auto border border-slate-200 bg-white py-0 order-1 order-md-0 text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" id="pagesize" name="size">
                           <option value="12" {{ $size == 12 ? 'selected' : '' }}>Show</option>
                           <option value="24" {{ $size == 24 ? 'selected' : '' }}>24</option>
                           <option value="48" {{ $size == 48 ? 'selected' : '' }}>48</option>
                           <option value="102" {{ $size == 102 ? 'selected' : '' }}>102</option>
                       </select>
 
-                      <select class="hop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0" id="orderby" name="order">
+                      <select class="hop-acs__select form-select w-auto border border-slate-200 bg-white py-0 order-1 order-md-0 text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" id="orderby" name="order">
                           <option value="-1" {{ $order == -1 ? 'selected' : '' }}>Default</option>
                           <option value="1" {{ $order == 1 ? 'selected' : '' }}>Date, New To Old</option>
                           <option value="2" {{ $order == 2 ? 'selected' : '' }}>Date, Old To New</option>
@@ -264,13 +256,13 @@
                   </div>
               </form>
 
-            <div class="shop-asc__seprator mx-3 bg-light d-none d-md-block order-md-0"></div>
+            <div class="shop-asc__seprator mx-3 bg-slate-200 dark:bg-slate-700 d-none d-md-block order-md-0"></div>
 
             <div class="col-size align-items-center order-1 d-none d-lg-flex">
-              <span class="text-uppercase fw-medium me-2">View</span>
-              <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid" data-cols="2">2</button>
-              <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid" data-cols="3">3</button>
-              <button class="btn-link fw-medium js-cols-size" data-target="products-grid" data-cols="4">4</button>
+              <span class="text-uppercase fw-medium me-2 text-slate-700 dark:text-slate-200">View</span>
+              <button class="btn-link fw-medium me-2 js-cols-size text-slate-700 dark:text-slate-200" data-target="products-grid" data-cols="2">2</button>
+              <button class="btn-link fw-medium me-2 js-cols-size text-slate-700 dark:text-slate-200" data-target="products-grid" data-cols="3">3</button>
+              <button class="btn-link fw-medium js-cols-size text-slate-700 dark:text-slate-200" data-target="products-grid" data-cols="4">4</button>
             </div>
 
             <div class="shop-filter d-flex align-items-center order-0 order-md-3 d-lg-none">
@@ -290,19 +282,17 @@
           @foreach($products as $product)
 
             <div class="product-card-wrapper">
-              <div class="product-card mb-3 mb-md-4 mb-xxl-5">
+              <div class="product-card mb-3 mb-md-4 mb-xxl-5 rounded-xl border border-slate-200/70 bg-white p-3 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-950">
                 <div class="pc__img-wrapper">
                   <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
                     <div class="swiper-wrapper">
                       <div class="swiper-slide">
-                        <a href="{{route('shop.product.detail', ['product_slug' => $product->slug])}}"><img loading="lazy" src="{{ asset('uploads/products/' . $product->image) }}" width="300" height="300" style="object-fit: cover;"
-                         alt="{{$product->name}}" class="pc__img"></a>
+                        <a href="{{route('shop.product.detail', ['product_slug' => $product->slug])}}"><img loading="lazy" src="{{ asset('uploads/products/' . $product->image) }}" width="300" height="300" alt="{{$product->name}}" class="pc__img theme-media-cover"></a>
                       </div>
                       <div class="swiper-slide">
                         @if(!empty($product->images_list))
                           @foreach($product->images_list as $img)
-                            <a href="{{route('shop.product.detail', ['product_slug' => $product->slug])}}"><img loading="lazy" src="{{ asset('uploads/products/thumbnails/' . trim($img)) }}"
-                            width="300" height="300" style="object-fit: cover;" alt="{{$product->name}}" class="pc__img"></a>
+                            <a href="{{route('shop.product.detail', ['product_slug' => $product->slug])}}"><img loading="lazy" src="{{ asset('uploads/products/thumbnails/' . trim($img)) }}" width="300" height="300" alt="{{$product->name}}" class="pc__img theme-media-cover"></a>
                           @endforeach
                         @endif
                       </div>
@@ -340,7 +330,7 @@
                       @if($product->sale_price)
                         <s>${{$product->regular_price}}</s> {{$product->sale_price}}
                       @else
-                        $($product->regular_price)
+                        ${{ $product->regular_price }}
                       @endif
                     </span>
                   </div>
@@ -366,23 +356,23 @@
                   </div>
 
                   @if(Cart::instance('wishlist')->content()->where('id',$product->id)->count()>0)
-                  <form method="POST" action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance('wishlist')->content()->where('id', $product->id)->first()->rowId]) }}"> 
+                  <form data-recaptcha-ignore="1" data-wishlist-toggle="1" data-product-id="{{$product->id}}" method="POST" action="{{ route('wishlist.item.remove', ['rowId' => Cart::instance('wishlist')->content()->where('id', $product->id)->first()->rowId]) }}"> 
                     @csrf
-                    @method('DELETE') <!-- si vous utilisez une route DELETE -->                     
-                    <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist filled-heart" title="Remove To Wishlist">
+                    @method('DELETE')
+                    <button class="pc__btn-wl wishlist-icon-btn is-active position-absolute top-0 end-0 border-0 js-add-wishlist" title="Remove To Wishlist">
                         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <use href="#icon_heart" />
                         </svg>
                       </button>
                     </form>
                   @else
-                    <form method="POST" action="{{route('wishlist.add')}}">
+                    <form data-recaptcha-ignore="1" data-wishlist-toggle="1" data-product-id="{{$product->id}}" method="POST" action="{{route('wishlist.add')}}">
                       @csrf
                       <input type="hidden" name="id" value="{{$product->id}}">
                       <input type="hidden" name="name" value="{{$product->name}}">
                       <input type="hidden" name="price" value="{{$product->sale_price == '' ? $product->regular_price : $product->sale_price }}">
                       <input type="hidden" name="quantity" value="1">
-                      <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
+                      <button class="pc__btn-wl wishlist-icon-btn position-absolute top-0 end-0 border-0 js-add-wishlist" title="Add To Wishlist">
                         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <use href="#icon_heart" />
                         </svg>
@@ -396,7 +386,6 @@
           @endforeach
 
         </div>
-        <!-- Pagination -->
         <div class="divider"></div>
 
         <div class="flex items-center justify-between flexwrap gap10 wgp-pagination">
@@ -407,55 +396,46 @@
     </section>
   </main>
 
-  <form id="frmfilter" method="GET" action="{{ route('shop.index') }}">
-    @csrf
+  <form id="shopFilterForm" method="GET" action="{{ route('shop.index') }}">
     <input type="hidden" name="page" value="{{ $products->currentPage() }}" />
     <input type="hidden" name="size" id="size" value="{{ $size }}" />
     <input type="hidden" name="order" id="order" value="{{ $order }}" />
+    <input type="hidden" name="brands" id="hdnbrands" value="{{ $f_brands }}" />
+    <input type="hidden" name="categories" id="hdncategories" value="{{ $f_categories }}" />
+    <input type="hidden" name="q" id="hdnquery" value="{{ $query ?? '' }}" />
   </form>
 @endsection
 
 @push('scripts')
 <script>
     $(function () {
-        // Quand on change la taille de page ou le tri, on soumet le formulaire
         $("#pagesize, #orderby").on("change", function () {
-            $("#frmfilter").submit();
+            $("#size").val($("#pagesize").val() || 12);
+            $("#order").val($("#orderby").val() || -1);
+            $("#shopFilterForm").submit();
         });
 
-        // Quand une checkbox est cochée ou décochée
         $("input[name='brands[]']").on("change", function () {
-            // Récupère toutes les marques cochées
-            let brands = $("input[name='brands[]']:checked").map(function () {
+            const brands = $("input[name='brands[]']:checked").map(function () {
                 return $(this).val();
             }).get().join(",");
 
-            // Récupère aussi les valeurs actuelles de pagesize et orderby si présents
-            let size = $("#pagesize").val() || 12;
-            let order = $("#orderby").val() || -1;
-
-            // Reconstruit l'URL
-            let url = `?brands=${brands}&size=${size}&order=${order}`;
-
-            // Redirige
-            window.location.href = url;
+            $("#hdnbrands").val(brands);
+            $("#size").val($("#pagesize").val() || 12);
+            $("#order").val($("#orderby").val() || -1);
+            $("#shopFilterForm").submit();
         });
 
         $("input[name='categories[]']").on("change", function () {
-            var cats = "";
-            $("input[name='categories[]']:checked").each(function () {
-                if (cats == "") {
-                    cats += $(this).val();
-                } else {
-                    cats += "," + $(this).val();
-                }
-            });
+            const cats = $("input[name='categories[]']:checked").map(function () {
+                return $(this).val();
+            }).get().join(",");
 
             $("#hdncategories").val(cats);
-            $("#frmfilter").submit();
+            $("#size").val($("#pagesize").val() || 12);
+            $("#order").val($("#orderby").val() || -1);
+            $("#shopFilterForm").submit();
         });
     });
 </script>
 @endpush
-
-

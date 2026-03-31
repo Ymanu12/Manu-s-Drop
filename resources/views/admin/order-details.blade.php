@@ -1,13 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-<style>
-    .table-transaction>tbody>tr:nth-of-type(odd) {
-        --bs-table-accent-bg: #fff !important;
-    }
-</style>
-<div class="main-content-inner">
-    <div class="main-content-wrap">
+<div class="main-content-inner text-slate-900 dark:text-slate-100">
+    <div class="main-content-wrap text-slate-900 dark:text-slate-100">
         <div class="flex items-center flex-wrap justify-between gap20 mb-27">
             <h3>Order Details</h3>
             <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
@@ -21,18 +16,18 @@
             </ul>
         </div>
 
-        <div class="wg-box">
+        <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card">
             <div class="flex items-center justify-between gap10 flex-wrap">
                 <div class="wg-filter flex-grow">
                     <h5>Ordered Details</h5>
                 </div>
                 <a class="tf-button style-1 w208" href="{{route('admin.orders')}}">Back</a>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive admin-shell-table">
                 @if(Session::has('status'))
                     <p class="alert alert-success mt-3">{{ Session::get('status') }}</p>
                 @endif
-                <table class="table table-striped table-bordered">
+                <table class="table table-striped table-bordered overflow-hidden rounded-xl">
                     <thead>
                         <tr>
                             <th>Order no</th>
@@ -65,16 +60,16 @@
                     </thead>
                 </table>
             </div>
-        </div><br><br><br><br><br><br>
+        </div>
 
-        <div class="wg-box">
+        <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card admin-shell-section-gap">
             <div class="flex items-center justify-between gap10 flex-wrap">
                 <div class="wg-filter flex-grow">
                     <h5>Ordered Items</h5>
                 </div>
             </div>
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered">
+            <div class="table-responsive admin-shell-table">
+                <table class="table table-striped table-bordered overflow-hidden rounded-xl">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -137,7 +132,7 @@
             </div>
         </div>
 
-        <div class="wg-box mt-5">
+        <div class="wg-box admin-shell-card p-5 admin-shell-section-gap">
             <h5>Shipping Address</h5>
             <div class="my-account__address-item col-md-6">
                 <div class="my-account__address-item__detail">
@@ -153,7 +148,7 @@
             </div>
         </div>
 
-        <div class="wg-box mt-5">
+        <div class="wg-box admin-shell-card p-5 admin-shell-section-gap">
             <h5>Update Order Status</h5>
             <form action="{{ route('update.order.status') }}" method="POST">
                 @csrf
@@ -161,7 +156,7 @@
                 <input type="hidden" name="order_id" value="{{ $order->id }}" />
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="select">
+                        <div class="select admin-shell-select">
                             <select id="order_status" name="order_status">
                                 <option value="ordered" {{ $order->status == 'ordered' ? 'selected' : '' }}>ordered</option>
                                 <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>delivered</option>

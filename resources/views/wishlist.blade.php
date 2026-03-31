@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<main class="pt-90">
+<main class="pt-90 text-slate-900 dark:text-slate-100">
     <div class="mb-4 pb-4"></div>
 
-    <section class="shop-checkout container">
+    <section class="shop-checkout container md:rounded-2xl md:border md:border-slate-200/70 bg-white/80 md:px-4 md:py-4 md:shadow-sm transition-colors dark:md:border-slate-800 dark:bg-slate-900/80">
         <h2 class="page-title">Wishlist</h2>
 
         <div class="shopping-cart">
             @if($items->count() > 0)
             <div class="cart-table__wrapper">
-                <table class="cart-table">
+                <table class="cart-table overflow-hidden rounded-xl border border-slate-200/70 dark:border-slate-800">
                     <thead>
                         <tr>
                             <th>Product</th>
@@ -49,13 +49,13 @@
                             <td>
                                 <div class="row">
                                     <div class="col-6">
-                                        <form method="POST" action="{{ route('wishlist.move.to.cart', $item->rowId) }}">
+                                        <form data-recaptcha-ignore="1" method="POST" action="{{ route('wishlist.move.to.cart', $item->rowId) }}">
                                             @csrf
-                                            <button class="btn btn-sm btn-warning">Move to Cart</button>
+                                            <button class="btn btn-sm btn-warning border-0 shadow-sm">Move to Cart</button>
                                         </form>
                                     </div>
                                     <div class="col-6">
-                                        <form method="POST" action="{{ route('wishlist.item.remove', ['rowId' => $item->rowId]) }}" id="remove-item-{{ $item->rowId }}">
+                                        <form data-recaptcha-ignore="1" method="POST" action="{{ route('wishlist.item.remove', ['rowId' => $item->rowId]) }}" id="remove-item-{{ $item->rowId }}">
                                             @csrf
                                             @method('DELETE')
                                             <a href="javascript:void(0)" class="remove-cart" onclick="document.getElementById('remove-item-{{ $item->rowId }}').submit()">
@@ -74,16 +74,16 @@
                 </table>
 
                 <div class="cart-table-footer mt-4">
-                    <form method="POST" action="{{ route('wishlist.empty') }}">
+                    <form data-recaptcha-ignore="1" method="POST" action="{{ route('wishlist.empty') }}">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-light">Clear Wishlist</button>
+                        <button type="submit" class="btn btn-light border border-slate-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">Clear Wishlist</button>
                     </form>
                 </div>
             </div>
             @else
             <div class="row">
-                <div class="col-md-12 text-center pt-5 pb-5">
+                <div class="col-md-12 text-center pt-5 pb-5 rounded-xl border border-dashed border-slate-300 bg-white/70 p-8 dark:border-slate-700 dark:bg-slate-900/60">
                     <p>No items found in your wishlist</p>
                     <a href="{{ route('shop.index') }}" class="btn btn-info">Start Shopping</a>
                 </div>

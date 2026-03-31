@@ -1,97 +1,76 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="main-content-inner">
-        <div class="main-content-wrap">
-
-            <!-- Header & Breadcrumbs -->
-            <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>Category Information</h3>
-                <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
-                    <li>
-                        <a href="{{ route('admin.index') }}">
-                            <div class="text-tiny">Dashboard</div>
-                        </a>
-                    </li>
-                    <li><i class="icon-chevron-right"></i></li>
-                    <li>
-                        <a href="{{ route('admin.categories') }}">
-                            <div class="text-tiny">Categories</div>
-                        </a>
-                    </li>
-                    <li><i class="icon-chevron-right"></i></li>
-                    <li>
-                        <div class="text-tiny">New Category</div>
-                    </li>
-                </ul>
+<div class="main-content-inner text-slate-900 dark:text-slate-100">
+    <div class="main-content-wrap text-slate-900 dark:text-slate-100">
+        <div class="admin-page-header">
+            <div>
+                <div class="admin-page-header__eyebrow">Catalog</div>
+                <h2 class="admin-page-header__title">Create category</h2>
+                <p class="admin-page-header__meta">Add a new collection entry with a clear slug and a representative image.</p>
             </div>
-
-            <!-- Success Message -->
-            @if(session('status'))
-                <div class="alert alert-success text-center my-3">
-                    {{ session('status') }}
-                </div>
-            @endif
-
-            <!-- New Category Form -->
-            <div class="wg-box">
-                <form class="form-new-product form-style-1" 
-                      action="{{ route('admin.categories.store') }}" 
-                      method="POST" 
-                      enctype="multipart/form-data">
-                    @csrf
-
-                    <!-- Category Name -->
-                    <fieldset class="name">
-                        <div class="body-title">Category Name <span class="tf-color-1">*</span></div>
-                        <input type="text" name="name" class="flex-grow" placeholder="Category name"
-                            value="{{ old('name') }}" required>
-                    </fieldset>
-                    @error('name')
-                        <span class="alert alert-danger d-block mt-2 text-center">{{ $message }}</span>
-                    @enderror
-
-                    <!-- Category Slug -->
-                    <fieldset class="name">
-                        <div class="body-title">Category Slug <span class="tf-color-1">*</span></div>
-                        <input type="text" name="slug" class="flex-grow" placeholder="Category slug"
-                            value="{{ old('slug') }}" required>
-                    </fieldset>
-                    @error('slug')
-                        <span class="alert alert-danger d-block mt-2 text-center">{{ $message }}</span>
-                    @enderror
-
-                    <!-- Image Upload -->
-                    <fieldset>
-                        <div class="body-title">Upload Image <span class="tf-color-1">*</span></div>
-                        <div class="upload-image flex-grow">
-                            <div class="item" id="imgpreview" style="display:none">
-                                <img src="#" class="effect8" alt="Preview Image">
-                            </div>
-                            <div id="upload-file" class="item up-load">
-                                <label class="uploadfile" for="myFile">
-                                    <span class="icon"><i class="icon-upload-cloud"></i></span>
-                                    <span class="body-text">
-                                        Drop your images here or <span class="tf-color">click to browse</span>
-                                    </span>
-                                    <input type="file" id="myFile" name="image" accept="image/*" required>
-                                </label>
-                            </div>
-                        </div>
-                    </fieldset>
-                    @error('image')
-                        <span class="alert alert-danger d-block mt-2 text-center">{{ $message }}</span>
-                    @enderror
-
-                    <!-- Submit Button -->
-                    <div class="bot mt-4">
-                        <div></div>
-                        <button class="tf-button w208" type="submit">Save</button>
-                    </div>
-                </form>
-            </div>
+            <ul class="admin-breadcrumbs">
+                <li><a href="{{ route('admin.index') }}">Dashboard</a></li>
+                <li>Categories</li>
+                <li>Create</li>
+            </ul>
         </div>
+
+        @if (session('status'))
+            <div class="admin-form-alert admin-form-alert--success">{{ session('status') }}</div>
+        @endif
+
+        <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data" class="form-new-product form-style-1 admin-form-grid">
+            @csrf
+
+            <section class="admin-form-panel admin-form-stack">
+                <div class="admin-form-panel__header">
+                    <div>
+                        <div class="admin-form-panel__title">Category information</div>
+                        <p class="admin-form-panel__meta">Define the category name and slug used across navigation, filters, and product groupings.</p>
+                    </div>
+                    <span class="admin-form-badge">Catalog setup</span>
+                </div>
+
+                <x-input-field name="name" label="Category name" :required="true" :value="old('name')" wrapperClass="form-floating theme-form-field" />
+                <x-input-field name="slug" label="Category slug" :required="true" :value="old('slug')" wrapperClass="form-floating theme-form-field" />
+            </section>
+
+            <section class="admin-form-panel admin-form-stack">
+                <div class="admin-form-panel__header">
+                    <div>
+                        <div class="admin-form-panel__title">Category media</div>
+                        <p class="admin-form-panel__meta">Upload a clean, representative image for listing pages and promotional placements.</p>
+                    </div>
+                    <span class="admin-form-badge">Visual asset</span>
+                </div>
+
+                <fieldset class="theme-form-field">
+                    <div class="body-title">Upload image <span class="tf-color-1">*</span></div>
+                    <div class="upload-image flex-grow">
+                        <div class="item admin-inline-hidden" id="imgpreview">
+                            <img src="#" class="effect8 admin-preview-image" alt="Preview image">
+                        </div>
+                        <div id="upload-file" class="item up-load">
+                            <label class="uploadfile" for="myFile">
+                                <span class="icon"><i class="icon-upload-cloud"></i></span>
+                                <span class="body-text">Drop your image here or <span class="tf-color">click to browse</span></span>
+                                <input type="file" id="myFile" name="image" accept="image/*" required>
+                            </label>
+                        </div>
+                    </div>
+                    <p class="admin-form-help">Recommended: square image with clean padding for better category cards.</p>
+                    @error('image')<span class="alert alert-danger admin-form-alert">{{ $message }}</span>@enderror
+                </fieldset>
+
+                <div class="admin-form-actions admin-form-actions--split">
+                    <div class="admin-form-note">Categories structure the storefront. Keep naming consistent with your product taxonomy.</div>
+                    <button class="tf-button" type="submit">Save category</button>
+                </div>
+            </section>
+        </form>
     </div>
+</div>
 @endsection
 
 @push('scripts')

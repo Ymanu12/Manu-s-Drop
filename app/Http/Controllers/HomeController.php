@@ -17,10 +17,10 @@ class HomeController extends Controller
         $sproducts = Product::whereNotNull('sale_price')->where('sale_price', '<>', '')->inRandomOrder()->take(8)->get();
         $fproducts = Product::where('featured', 1)->latest()->take(8)->get();
         $seo = [
-            'title' => "Accueil | " . config('seo.site_name'),
-            'description' => "Boutique en ligne Manu's Drop: nouveautés, produits en promotion et sélections tendance pour vos achats au Togo.",
+            'title' => "Home | " . config('seo.site_name'),
+            'description' => "Manu's Drop online store: new arrivals, sale products, and trend-driven picks for shopping in Togo.",
             'canonical' => route('home.index'),
-            'keywords' => 'boutique en ligne, mode, accessoires, shopping Togo, Manu\'s Drop',
+            'keywords' => 'online store, fashion, accessories, shopping Togo, Manu\'s Drop',
         ];
 
         return view('index', compact('sliders', 'categories', 'sproducts', 'fproducts', 'seo'));
@@ -30,9 +30,9 @@ class HomeController extends Controller
     {
         $seo = [
             'title' => 'Contact | ' . config('seo.site_name'),
-            'description' => "Contactez Manu's Drop pour vos commandes, livraisons et demandes d'information.",
+            'description' => "Contact Manu's Drop for orders, deliveries, and support requests.",
             'canonical' => route('home.contacts'),
-            'keywords' => 'contact boutique, service client, Manu\'s Drop',
+            'keywords' => 'store contact, customer service, Manu\'s Drop',
         ];
 
         return view('contacts', compact('seo'));
@@ -41,10 +41,10 @@ class HomeController extends Controller
     public function abouts()
     {
         $seo = [
-            'title' => 'A propos | ' . config('seo.site_name'),
-            'description' => "Découvrez l'univers de Manu's Drop, sa sélection de produits et sa vision du shopping en ligne.",
+            'title' => 'About | ' . config('seo.site_name'),
+            'description' => "Dï¿½couvrez l'univers de Manu's Drop, sa sï¿½lection de produits et sa vision du shopping en ligne.",
             'canonical' => route('home.about'),
-            'keywords' => 'a propos, boutique en ligne, Manu\'s Drop',
+            'keywords' => 'about, online store, Manu\'s Drop',
         ];
 
         return view('abouts', compact('seo'));
@@ -75,10 +75,14 @@ class HomeController extends Controller
             'query' => 'required|string|min:2|max:100',
         ]);
 
+        $query = trim($validated['query']);
+
         $results = Product::query()
             ->select('id', 'name', 'slug', 'image', 'regular_price', 'sale_price')
-            ->where('name', 'LIKE', '%' . $validated['query'] . '%')
-            ->limit(8)
+            ->where('name', 'LIKE', '%' . $query . '%')
+            ->orderByRaw('CASE WHEN name LIKE ? THEN 0 ELSE 1 END', [$query . '%'])
+            ->orderBy('name')
+            ->limit(10)
             ->get();
 
         return response()->json($results);

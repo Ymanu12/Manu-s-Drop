@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<main class="pt-90">
+<main class="pt-90 text-slate-900 dark:text-slate-100">
     <div class="mb-4 pb-4"></div>
-    <section class="shop-checkout container">
+    <section class="shop-checkout container md:rounded-2xl md:border md:border-slate-200/70 bg-white/80 md:px-4 md:py-4 md:shadow-sm transition-colors dark:md:border-slate-800 dark:bg-slate-900/80">
       <h2 class="page-title">Cart</h2>
       <div class="checkout-steps">
         <a href="javascript:void(0)" class="checkout-steps__item active">
@@ -31,7 +31,7 @@
       <div class="shopping-cart">
         @if($items->count()>0)
         <div class="cart-table__wrapper">
-          <table class="cart-table">
+          <table class="cart-table overflow-hidden rounded-xl border border-slate-200/70 dark:border-slate-800">
             <thead>
               <tr>
                 <th>Product</th>
@@ -100,13 +100,13 @@
           </table>
           <div class="cart-table-footer">
             @if (!Session::has('coupon'))
-                <form action="{{ route('cart.coupon.apply') }}" method="POST" class="position-relative bg-body">
+                <form action="{{ route('cart.coupon.apply') }}" method="POST" class="position-relative rounded-xl border border-slate-200 bg-body p-2 dark:border-slate-700 dark:bg-slate-950">
                     @csrf
                     <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code" value="">
                     <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit" value="APPLY COUPON">
                 </form>
             @else
-                <form action="{{ route('cart.coupon.remove') }}" method="POST" class="position-relative bg-body">
+                <form action="{{ route('cart.coupon.remove') }}" method="POST" class="position-relative rounded-xl border border-slate-200 bg-body p-2 dark:border-slate-700 dark:bg-slate-950">
                     @csrf
                     @method('DELETE')
                     <input class="form-control text-success fw-bold" type="text" name="coupon_code" readonly
@@ -118,7 +118,7 @@
             <form method="POST" action="{{ route('cart.empty') }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-light">CLEAR CART</button>
+                <button type="submit" class="btn btn-light border border-slate-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">CLEAR CART</button>
             </form>
             @if(Session::has('status'))
               <p class="alert-success">{{ Session::get('status') }}</p>
@@ -129,7 +129,7 @@
         </div>
         <div class="shopping-cart__totals-wrapper">
           <div class="sticky-content">
-            <div class="shopping-cart__totals">
+            <div class="shopping-cart__totals md:rounded-xl md:border md:border-slate-200/70 bg-slate-50/80 md:p-4 transition-colors dark:md:border-slate-800 dark:bg-slate-950/80">
               <h3>Cart Totals</h3>
               @if(Session::has('discounts'))
               <table class="cart-totals">
@@ -192,7 +192,7 @@
         </div>
         @else
         <div class="row">
-            <div class="col-md-12 text-center pt-5 bp-5">
+            <div class="col-md-12 text-center pt-5 bp-5 rounded-xl border border-dashed border-slate-300 bg-white/70 p-8 dark:border-slate-700 dark:bg-slate-900/60">
                 <p>No items found in your cart</p>
                 <a href="{{route('shop.index')}}" class="btn btn-info">shop now</a>
             </div>

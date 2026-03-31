@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<main class="pt-90">
+<main class="pt-90 text-slate-900 dark:text-slate-100">
     <div class="mb-4 pb-4"></div>
-    <section class="shop-checkout container">
+    <section class="shop-checkout container md:rounded-2xl md:border md:border-slate-200/70 bg-white/80 md:px-4 md:py-4 md:shadow-sm transition-colors dark:md:border-slate-800 dark:bg-slate-900/80">
       <h2 class="page-title">Order Received</h2>
       <div class="checkout-steps">
         <a href="javascript:void(0)" class="checkout-steps__item active">
@@ -28,8 +28,8 @@
           </span>
         </a>
       </div>
-      <div class="order-complete">
-        <div class="order-complete__message">
+      <div class="order-complete rounded-2xl border border-slate-200/60 bg-white/70 p-4 transition-colors dark:border-slate-800 dark:bg-slate-950/60">
+        <div class="order-complete__message rounded-xl border border-slate-200/70 bg-slate-50/80 p-5 text-center transition-colors dark:border-slate-800 dark:bg-slate-950/70">
           <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="40" cy="40" r="40" fill="#B9A16B" />
             <path d="M52.9743 35.7612C52.9743 35.3426 52.8069 34.9241 52.5056 34.6228L50.2288 32.346C49.9275 32.0446 49.5089 31.8772 49.0904 31.8772C48.6719 31.8772 48.2533 32.0446 47.952 32.346L36.9699 43.3449L32.048 38.4062C31.7467 38.1049 31.3281 37.9375 30.9096 37.9375C30.4911 37.9375 30.0725 38.1049 29.7712 38.4062L27.4944 40.683C27.1931 40.9844 27.0257 41.4029 27.0257 41.8214C27.0257 42.24 27.1931 42.6585 27.4944 42.9598L33.5547 49.0201L35.8315 51.2969C36.1328 51.5982 36.5513 51.7656 36.9699 51.7656C37.3884 51.7656 37.8069 51.5982 38.1083 51.2969L40.385 49.0201L52.5056 36.8996C52.8069 36.5982 52.9743 36.1797 52.9743 35.7612Z" fill="white" />
@@ -47,7 +47,7 @@
             </a>
           </div>
         </div>
-        <div class="order-info">
+        <div class="order-info rounded-xl border border-slate-200/70 bg-slate-50/80 p-4 transition-colors dark:border-slate-800 dark:bg-slate-950/70">
           <div class="order-info__item">
             <label>Order Number</label>
             <span>{{ $order->id ?? 'N/A' }}</span>
@@ -66,7 +66,7 @@
           </div>
         </div>
         <div class="checkout__totals-wrapper">
-            <div class="checkout__totals">
+            <div class="checkout__totals md:rounded-xl md:border md:border-slate-200/70 bg-slate-50/80 md:p-4 transition-colors dark:md:border-slate-800 dark:bg-slate-950/80">
                 <h3>Order Details</h3>
                 <table class="checkout-cart-items">
                     <thead>
@@ -89,7 +89,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="2">No items found in this order.</td>
+                                <td colspan="2" class="text-slate-500 dark:text-slate-400">No items found in this order.</td>
                             </tr>
                         @endif
                     </tbody>

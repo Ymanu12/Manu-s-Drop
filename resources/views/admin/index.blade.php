@@ -19,15 +19,15 @@
     }
 
     .admin-kpi-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
-        border: 1px solid #e5e7eb;
+        background: linear-gradient(135deg, var(--theme-surface) 0%, var(--theme-surface-muted) 100%);
+        border: 1px solid var(--theme-border);
         border-radius: 16px;
         padding: 22px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+        box-shadow: var(--theme-shadow);
     }
 
     .admin-kpi-label {
-        color: #6b7280;
+        color: var(--theme-muted);
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: .08em;
@@ -35,7 +35,7 @@
     }
 
     .admin-kpi-value {
-        color: #111827;
+        color: var(--theme-text);
         font-size: 28px;
         font-weight: 700;
         line-height: 1.2;
@@ -43,7 +43,7 @@
     }
 
     .admin-kpi-note {
-        color: #4b5563;
+        color: var(--theme-muted);
         font-size: 13px;
     }
 
@@ -62,18 +62,18 @@
     }
 
     .admin-list-item {
-        border: 1px solid #eef2f7;
+        border: 1px solid var(--theme-border);
         border-radius: 14px;
         padding: 14px 16px;
-        background: #fff;
+        background: var(--theme-surface);
     }
 
     .admin-list-item strong {
-        color: #111827;
+        color: var(--theme-text);
     }
 
     .admin-list-meta {
-        color: #6b7280;
+        color: var(--theme-muted);
         font-size: 12px;
         margin-top: 4px;
     }
@@ -85,12 +85,12 @@
         padding: 4px 10px;
         font-size: 12px;
         font-weight: 600;
-        background: #eef2ff;
-        color: #3730a3;
+        background: var(--theme-accent-soft);
+        color: var(--theme-accent);
     }
 
     .admin-empty {
-        color: #6b7280;
+        color: var(--theme-muted);
         padding: 12px 0;
     }
 
@@ -103,8 +103,42 @@
 @endpush
 
 @section('content')
-<div class="main-content-inner">
-    <div class="main-content-wrap">
+<div class="main-content-inner text-slate-900 dark:text-slate-100">
+    <div class="main-content-wrap text-slate-900 dark:text-slate-100">
+        <div class="admin-page-header">
+            <div>
+                <div class="admin-page-header__eyebrow">Admin Overview</div>
+                <h3 class="admin-page-header__title">Dashboard</h3>
+                <div class="admin-page-header__meta">Track revenue, orders, stock pressure, and customer activity from one place so the team can act faster.</div>
+            </div>
+            <div class="admin-badge-soft">{{ now()->format('M d, Y') }}</div>
+        </div>
+
+        <div class="admin-dashboard-hero">
+            <div>
+                <h4 class="mb-2">Business pulse at a glance</h4>
+                <div class="admin-dashboard-hero__lede">Today you have {{ $pendingOrdersCount ?? 0 }} order(s) waiting, {{ $lowStockProducts->count() }} low-stock item(s), and {{ $newMessagesCount ?? 0 }} fresh customer conversation(s) to review.</div>
+            </div>
+            <div class="admin-dashboard-hero__stats">
+                <div class="admin-dashboard-mini">
+                    <div class="admin-dashboard-mini__label">Revenue today</div>
+                    <div class="admin-dashboard-mini__value">${{ number_format((float) ($todayRevenue ?? 0), 2) }}</div>
+                </div>
+                <div class="admin-dashboard-mini">
+                    <div class="admin-dashboard-mini__label">Revenue this week</div>
+                    <div class="admin-dashboard-mini__value">${{ number_format((float) ($weeklyRevenue ?? 0), 2) }}</div>
+                </div>
+                <div class="admin-dashboard-mini">
+                    <div class="admin-dashboard-mini__label">Average order</div>
+                    <div class="admin-dashboard-mini__value">${{ number_format((float) ($averageOrderValue ?? 0), 2) }}</div>
+                </div>
+                <div class="admin-dashboard-mini">
+                    <div class="admin-dashboard-mini__label">New customers</div>
+                    <div class="admin-dashboard-mini__value">{{ $newCustomersThisMonth ?? 0 }}</div>
+                </div>
+            </div>
+        </div>
+
         <div class="admin-kpi-grid">
             <div class="admin-kpi-card">
                 <div class="admin-kpi-label">Today Revenue</div>
@@ -129,14 +163,14 @@
         </div>
 
         <div class="admin-panel-grid">
-            <div class="wg-box">
+            <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card">
                 <div class="admin-section-title">
                     <div>
                         <h5>Operations Snapshot</h5>
                         <div class="text-tiny">Real-time overview of what needs attention first</div>
                     </div>
                 </div>
-                <div class="admin-kpi-grid" style="margin-bottom:0;">
+                <div class="admin-kpi-grid">
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-label">Pending Orders</div>
                         <div class="admin-kpi-value">{{ $dashboard->TotalOrdered ?? 0 }}</div>
@@ -160,7 +194,7 @@
                 </div>
             </div>
 
-            <div class="wg-box">
+            <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card">
                 <div class="admin-section-title">
                     <div>
                         <h5>Needs Attention</h5>
@@ -300,7 +334,7 @@
                 </div>
             </div>
 
-            <div class="wg-box">
+            <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card">
                 <div class="flex items-center justify-between">
                     <h5>Monthly Revenue</h5>
                 </div>
@@ -361,7 +395,7 @@
 
         <div class="tf-section mb-30">
             <div class="admin-panel-grid">
-                <div class="wg-box">
+                <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card">
                     <div class="admin-section-title">
                         <div>
                             <h5>Recent Customer Messages</h5>
@@ -383,7 +417,7 @@
                     </div>
                 </div>
 
-                <div class="wg-box">
+                <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card">
                     <div class="admin-section-title">
                         <div>
                             <h5>Admin Activity</h5>
@@ -405,7 +439,7 @@
                 </div>
             </div>
 
-            <div class="wg-box">
+            <div class="wg-box rounded-2xl p-5 transition-colors admin-shell-card">
                 <div class="flex items-center justify-between">
                     <h5>Recent orders</h5>
                     <div class="dropdown default">
@@ -415,11 +449,11 @@
                     </div>
                 </div>
                 <div class="wg-table table-all-user">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
+                    <div class="table-responsive admin-shell-table">
+                        <table class="table table-striped table-bordered overflow-hidden rounded-xl">
                             <thead>
                                 <tr>
-                                    <th style="width:70px">OrderNo</th>
+                                    <th class="admin-col-order">OrderNo</th>
                                     <th class="text-center">Name</th>
                                     <th class="text-center">Phone</th>
                                     <th class="text-center">Subtotal</th>

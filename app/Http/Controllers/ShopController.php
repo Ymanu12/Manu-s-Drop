@@ -16,12 +16,14 @@ class ShopController extends Controller
             'order' => 'nullable|integer|in:-1,1,2,3,4',
             'brands' => 'nullable|string|max:255',
             'categories' => 'nullable|string|max:255',
+            'q' => 'nullable|string|max:100',
         ]);
 
         $size = $validated['size'] ?? 12;
         $order = $validated['order'] ?? -1;
         $f_brands = $validated['brands'] ?? '';
         $f_categories = $validated['categories'] ?? '';
+        $query = trim($validated['q'] ?? '');
 
         switch ($order) {
             case 1:
@@ -53,11 +55,14 @@ class ShopController extends Controller
         $categories = Category::with('products')->orderBy('name')->get();
 
         $products = Product::query()
-            ->when($brandIds->isNotEmpty(), function ($query) use ($brandIds) {
-                $query->whereIn('brand_id', $brandIds->all());
+            ->when($query !== '', function ($queryBuilder) use ($query) {
+                $queryBuilder->where('name', 'LIKE', '%' . $query . '%');
             })
-            ->when($categoryIds->isNotEmpty(), function ($query) use ($categoryIds) {
-                $query->whereIn('category_id', $categoryIds->all());
+            ->when($brandIds->isNotEmpty(), function ($queryBuilder) use ($brandIds) {
+                $queryBuilder->whereIn('brand_id', $brandIds->all());
+            })
+            ->when($categoryIds->isNotEmpty(), function ($queryBuilder) use ($categoryIds) {
+                $queryBuilder->whereIn('category_id', $categoryIds->all());
             })
             ->orderBy($o_column, $o_order)
             ->paginate($size)
@@ -65,12 +70,12 @@ class ShopController extends Controller
 
         $seo = [
             'title' => 'Boutique | ' . config('seo.site_name'),
-            'description' => "Parcourez le catalogue Manu's Drop et découvrez nos vêtements, accessoires et produits disponibles en ligne.",
+            'description' => "Parcourez le catalogue Manu's Drop et decouvrez nos vetements, accessoires et produits disponibles en ligne.",
             'canonical' => route('shop.index'),
             'keywords' => 'boutique, produits, shopping, mode, accessoires, Manu\'s Drop',
         ];
 
-        return view('shop', compact('products', 'size', 'order', 'brands', 'f_brands', 'categories', 'f_categories', 'seo'));
+        return view('shop', compact('products', 'size', 'order', 'brands', 'f_brands', 'categories', 'f_categories', 'seo', 'query'));
     }
 
     public function product_details($product_slug)

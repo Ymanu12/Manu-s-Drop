@@ -66,6 +66,12 @@ Route::get('/search', [HomeController::class, 'searchs'])->middleware('throttle:
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/{product_slug}', [ShopController::class, 'product_details'])->name('shop.product.detail');
 
+    Route::post('/wishlist/add', [WishlistController::class, 'add_to_wishlist'])->name('wishlist.add');
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::delete('/wishlist/delete/{rowId}', [WishlistController::class, 'remove_item'])->name('wishlist.item.remove');
+    Route::delete('/wishlist/destroy', [WishlistController::class, 'empty_wishlist'])->name('wishlist.empty');
+    Route::post('/wishlist/move-to-cart/{rowId}', [WishlistController::class, 'move_to_cart'])->name('wishlist.move.to.cart');
+
 Route::middleware('auth')->group(function () {
     Route::get('/user/index', [UserController::class, 'index'])->name('user.index');
     Route::get('/user/orders', [UserController::class, 'orders'])->name('user.orders');
@@ -92,12 +98,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/order-confirmation/pdf', [CartController::class, 'download_order_confirmation_pdf'])->name('cart.order.confirmation.pdf');
     Route::post('/cart/apply-coupon', [CartController::class, 'apply_coupon_code'])->name('cart.coupon.apply');
     Route::delete('/cart/remove-coupon', [CartController::class, 'remove_coupon_code'])->name('cart.coupon.remove');
-
-    Route::post('/wishlist/add', [WishlistController::class, 'add_to_wishlist'])->name('wishlist.add');
-    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
-    Route::delete('/wishlist/delete/{rowId}', [WishlistController::class, 'remove_item'])->name('wishlist.item.remove');
-    Route::delete('/wishlist/destroy', [WishlistController::class, 'empty_wishlist'])->name('wishlist.empty');
-    Route::post('/wishlist/move-to-cart/{rowId}', [WishlistController::class, 'move_to_cart'])->name('wishlist.move.to.cart');
 
     Route::get('/user/account', [UserController::class, 'account_edit'])->name('user.account.details');
     Route::post('/user/account', [UserController::class, 'account_update'])->name('user.account.update');
